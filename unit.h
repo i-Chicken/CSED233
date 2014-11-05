@@ -6,6 +6,7 @@ enum Team { BLUE, PURPLE, TNULL };
 enum UnitType { KING, ATTACK, STUN, BLOCK, TRI, SPLIT, HYPER, UNULL };
 
 
+
 class Unit{
 public:
 	Unit(UnitType, Team, int, int);
