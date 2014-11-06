@@ -9,7 +9,7 @@ enum UnitType { KING, ATTACK, STUN, BLOCK, TRI, SPLIT, HYPER, UNULL };
 
 class Unit{
 public:
-	Unit(UnitType, Team, int, int);
+	Unit(UnitType, Team, int, int);	// unittype, team, row, col
 	Team getTeam();
 	UnitType getUnitType();
 	void moveUnit(int, int);

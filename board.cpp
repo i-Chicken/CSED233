@@ -133,7 +133,8 @@ int Board::ActionSelect(int r, int c){
 	case KING:
 		action=1;		// King always MOVE
 		break;
-	case LASER:
+	case ATTACK:
+	case STUN:
 		action=2;		//Laser always ROTATE
 		break;
 	default:
@@ -145,109 +146,48 @@ int Board::ActionSelect(int r, int c){
 }
 
 bool Board::UnitAction(int r, int c, int a){	// boardRow, boardCol, actionType
-	Cell* target=chessboard[r][c];
 	int row, col;
-	int action;
 
-	switch(target->getUnitType()){
-	case KING:	// King just move
+	switch(a){
+	case 1:		// Unit moving;
 		cout << "Which posistion do you want it to Move?" << endl;
 		InputPosition(row, col);
-		if(row == r && col == c)	return false;	// same cell
-		if(chessboard[row][col]->movableTo() && (r-row)*(r-row) <= 1 && (c-col)*(c-col) <= 1){	//accessibilty == true && adjacent cell
-			target->moveTo(chessboard[row][col]);
-			char rt1=r+'A';		char rt2=row+'A';	// for print [Log]
-			cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << rt1 << " " << c+1 << " => " << rt2 << " " << col+1 << endl;
+		Cell* target=chessboard[row][col];
+		if(target->isMovable(chessboard[r][c]->getUnitType(), r, c)){
+			target->moveTo(chessboard[row][col];
+			cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << (char)('A'+r) << " " << c+1 << " => " << (char)('A'+row) << " " << col+1 << endl;
 		}
-		else	return false;	// invalid command
-		break;
-	case LASER:	// Laser just rotate in two way
-		cout << "do you want it to Rotate?" << endl;
-		cout << "1.OK		2. Cancel" << endl;
-		InputSelection(action);
-		if(action == 1){		// okay rotate
-			target->setUnitDir(DNULL);
-			char rt=r+'A';	// for print [Log]
-			cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << rt << " " << c+1 << " ROTATE" << endl;
+		else{
+			return false;
 		}
-		else	return false;	// cancel rotation
-		break;
-	case BLOCK:
-		if(a==1){	// Move
-			cout << "Which posistion do you want it to Move?" << endl;
-			InputPosition(row, col);
-			if(row == r && col == c)	return false;
-			if(chessboard[row][col]->movableTo() && (r-row)*(r-row) <= 1 && (c-col)*(c-col) <= 1){	//accessibilty == true && adjacent cell
-				target->moveTo(chessboard[row][col]);
-				char rt1=r+'A';		char rt2=row+'A';	// for print [Log]
-				cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << rt1 << " " << c+1 << " => " << rt2 << " " << col+1 << endl;
-			}
-			else	return false;	// invalid command
-		}
-		else{	// Rotate
-			cout << "Which direction do you want it to Rotate?" << endl;
-			cout << "1.LEFT		2.RIGHT" << endl;
-			InputSelection(action);
-			action == 1 ? target->setUnitDir(LEFT) : target->setUnitDir(RIGHT);
-			char rt=r+'A';	// for print [Log]
-			cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << rt << " " << c+1 << " ROTATE" << endl;
-		}
-		break;
-	case TRI:
-		if(a==1){	// Move
-			cout << "Which posistion do you want it to Move?" << endl;
-			InputPosition(row, col);
-			if(row == r && col == c)	return false;
-			if(chessboard[row][col]->movableTo() && (r-row)*(r-row) <= 1 && (c-col)*(c-col) <= 1){	//accessibilty == true && adjacent cell
-				target->moveTo(chessboard[row][col]);
-				char rt1=r+'A';		char rt2=row+'A';	// for print [Log]
-				cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << rt1 << " " << c+1 << " => " << rt2 << " " << col+1 << endl;
-			}
-			else	return false;	// invalid command
-		}
-		else{		// Rotate
-			cout << "Which direction do you want it to Rotate?" << endl;
-			cout << "1.LEFT		2.RIGHT" << endl;
-			InputSelection(action);
-			action == 1 ? target->setUnitDir(LEFT) : target->setUnitDir(RIGHT);
-			char rt=r+'A';
-			cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << rt << " " << c+1 << " ROTATE" << endl;
-		}
-		break;
-	case HYPER:
-		if(a==1){	// Move
-			cout << "Which posistion do you want it to Move?" << endl;
-			InputPosition(row, col);
-			if(row == r && col == c)	return false;
-			if((r-row)*(r-row) <= 1 && (c-col)*(c-col) <= 1){	// adjacent cell
-				if(chessboard[row][col]->movableTo()){			// Not Laser adjacent & empty cell
-					target->moveTo(chessboard[row][col]);
-					char rt1=r+'A';		char rt2=row+'A';	// for print [Log]
-					cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << rt1 << " " << c+1 << " => " << rt2 << " " << col+1 << endl;
-				}
-				else if(chessboard[row][col]->getUnitType() == LASER || chessboard[row][col]->getUnitType() == UNULL)
-				   return false;	// Laser or Laser adjacent
-				else{	// swap two unit
-				   target->swapWith(chessboard[row][col]);
-				   char rt1=r+'A';		char rt2=row+'A';	// for print [Log]
-				   cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << rt1 << " " << c+1 << " => " << rt2 << " " << col+1 << endl;
-				}
-			}
-		}
-		else{	// Rotate
+
+	case 2:		// Unit Rotating;
+		switch(chessboard[r][c]->getUnitType()){
+		case ATTACK:
+		case STUN:
+		case SPLIT:
+			int action;
 			cout << "do you want it to Rotate?" << endl;
 			cout << "1.OK		2. Cancel" << endl;
 			InputSelection(action);
 			if(action == 1){
-				target->setUnitDir(DNULL);
-				char rt=r+'A';	// for print [Log]
-				cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << rt << " " << c+1 << " ROTATE" << endl;
+				chessboard[r][c]->setUnitDir(DNULL);
+				cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << (char)('A'+r) << " " << c+1 << " ROTATE" << endl;
 			}
-			else	return false;	// cancel rotation
-		}
-		break;
+			else
+				return false;
+			break;
+		case BLOCK:
+		case TRI:
+		case SPLIT:
+			int action;
+			cout << "Which direction do you want it to Rotate?" << endl;
+			cout << "1.LEFT		2.RIGHT" << endl;
+			InputSelection(action);
+			action == 1 ? target->setUnitDir(LEFT) : target->setUnitDir(RIGHT);
+			cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << (char)('A'+r) << " " << c+1 << " ROTATE" << endl;
+			break;		
 	}
-
 	return true;
 }
 
