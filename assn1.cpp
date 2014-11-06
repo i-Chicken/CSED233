@@ -1,5 +1,9 @@
 #include<iostream>
-#include "global.h"
+#include "unit.h"
+#include "cell.h"
+#include "status.h"
+#include "board.h"
+
 
 using namespace std;
 

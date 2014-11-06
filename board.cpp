@@ -69,30 +69,32 @@ Board::~Board(){
 }		//Destructor 
 
 void Board::initGame(){	//setting board
-	chessboard[0][0]->setCell(LASER, new Laser(DOWN, PURPLE), false);
+	chessboard[0][0]->setCell(ATTACK, new AttackLaser(DOWN, PURPLE, 0, 0), false);
 	chessboard[0][1]->setCell(UNULL, NULL, false);	// Laser surround
 	chessboard[0][1]->setCell(UNULL, NULL, false);	// Laser surround
-	chessboard[0][4]->setCell(BLOCK, new BlockMirror(DOWN, PURPLE), false);
-	chessboard[0][5]->setCell(KING, new King(PURPLE), false);
-	chessboard[0][6]->setCell(BLOCK, new BlockMirror(DOWN, PURPLE), false);
-	chessboard[1][7]->setCell(TRI, new TriMirror(DOWN, PURPLE), false);
-	chessboard[3][0]->setCell(TRI, new TriMirror(RIGHT, PURPLE), false);
-	chessboard[3][2]->setCell(TRI, new TriMirror(LEFT, BLUE), false);
-	chessboard[3][4]->setCell(HYPER, new HyperMirror(UP, PURPLE), false);
-	chessboard[3][5]->setCell(HYPER, new HyperMirror(UP, PURPLE), false);
-	chessboard[3][6]->setCell(TRI, new TriMirror(DOWN, PURPLE), false);
-	chessboard[3][8]->setCell(TRI, new TriMirror(UP, BLUE), false);
-	chessboard[5][0]->setCell(TRI, new TriMirror(DOWN, PURPLE), false);
-	chessboard[5][2]->setCell(TRI, new TriMirror(UP, BLUE), false);
-	chessboard[5][3]->setCell(HYPER, new HyperMirror(UP, BLUE), false);
-	chessboard[5][4]->setCell(HYPER, new HyperMirror(UP, BLUE), false);
-	chessboard[5][6]->setCell(TRI, new TriMirror(RIGHT, PURPLE), false);
-	chessboard[5][8]->setCell(TRI, new TriMirror(LEFT, BLUE), false);
-	chessboard[7][1]->setCell(TRI, new TriMirror(UP, BLUE), false);
-	chessboard[8][2]->setCell(BLOCK, new BlockMirror(UP, BLUE), false);
-	chessboard[8][3]->setCell(KING, new King(BLUE), false);
-	chessboard[8][4]->setCell(BLOCK, new BlockMirror(UP, BLUE), false);
-	chessboard[8][8]->setCell(LASER, new Laser(UP, BLUE), false);
+	chessboard[0][4]->setCell(BLOCK, new BlockMirror(DOWN, PURPLE, 0, 4), false);
+	chessboard[0][5]->setCell(KING, new King(PURPLE, 0, 5), false);
+	chessboard[0][6]->setCell(BLOCK, new BlockMirror(DOWN, PURPLE, 0, 6), false);
+	chessboard[0][8]->setCell(STUN, new StunLaser(DOWN, PURPLE, 0, 8), false);
+	chessboard[1][7]->setCell(SPLIT, new SplitMirror(DOWN, PURPLE, 1, 7), false);
+	chessboard[3][0]->setCell(TRI, new TriMirror(RIGHT, PURPLE, 3, 0), false);
+	chessboard[3][2]->setCell(TRI, new TriMirror(LEFT, BLUE, 3, 2), false);
+	chessboard[3][4]->setCell(HYPER, new HyperMirror(UP, PURPLE, 3, 4), false);
+	chessboard[3][5]->setCell(HYPER, new HyperMirror(UP, PURPLE, 3, 5), false);
+	chessboard[3][6]->setCell(TRI, new TriMirror(DOWN, PURPLE, 3, 6), false);
+	chessboard[3][8]->setCell(TRI, new TriMirror(UP, BLUE, 3, 8), false);
+	chessboard[5][0]->setCell(TRI, new TriMirror(DOWN, PURPLE, 5, 0), false);
+	chessboard[5][2]->setCell(TRI, new TriMirror(UP, BLUE, 5, 2), false);
+	chessboard[5][3]->setCell(HYPER, new HyperMirror(UP, BLUE, 5, 3), false);
+	chessboard[5][4]->setCell(HYPER, new HyperMirror(UP, BLUE, 5, 4), false);
+	chessboard[5][6]->setCell(TRI, new TriMirror(RIGHT, PURPLE, 5, 6), false);
+	chessboard[5][8]->setCell(TRI, new TriMirror(LEFT, BLUE, 5, 8), false);
+	chessboard[7][1]->setCell(SPLIT, new SplitMirror(UP, BLUE, 7, 1), false);
+	chessboard[8][0]->setCell(STUN, new StunLaser(UP, BLUE, 8, 0), false);
+	chessboard[8][2]->setCell(BLOCK, new BlockMirror(UP, BLUE, 8, 2), false);
+	chessboard[8][3]->setCell(KING, new King(BLUE, 8, 3), false);
+	chessboard[8][4]->setCell(BLOCK, new BlockMirror(UP, BLUE, 8, 4), false);
+	chessboard[8][8]->setCell(ATTACK, new AttackLaser(UP, BLUE, 8, 8), false);
 	chessboard[7][8]->setCell(UNULL, NULL, false);	// Laser surround
 	chessboard[8][7]->setCell(UNULL, NULL, false);	// Laser surround
 }
