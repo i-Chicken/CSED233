@@ -20,7 +20,6 @@ private:
 	int row, col;
 	Unit* unit;
 	bool accessible;
-
 }
 
 #endif

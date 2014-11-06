@@ -101,6 +101,10 @@ bool Cell::movableTo(UnitType u, int r, int c){
 }
 
 void Cell::moveTo(Cell* target){
+	if(target->getUnitType() == HYPER){
+		swapWith(target);
+		return;
+	}
 	target->setCell(unittype, unit, false);
 	unit=NULL;
 	unittype=UNULL;
@@ -112,4 +116,99 @@ void Cell::swapWith(Cell* target){
 	Unit* temp=unit;
 	target->moveTo(this);	// Unit Moves : target -> this
 	target->setCell(temp->getUnitType(), temp, false);	// Unit Moves : this -> target
+}
+
+
+int Cell::beamCurCell(Direction& d, UnitType u){
+	Direction temp=d;
+
+	switch(unittype){
+	case KING:
+		d=DNULL;
+		cout << "[Laser] King of Player " << (team == PURPLE ? 1:2) << "is defeated" << endl;
+		return (team == PURPLE ? 1:2);	// game over
+	case ATTACK:
+	case STUN:
+		d=DNULL;
+		return 0;
+	case BLOCK:
+		if(getUnitDir() == RIGHT && d == LEFT)	d=DNULL;
+		else if(getUnitDir() == UP && d == DOWN)	d=DNULL;
+		else if(getUnitDir() == LEFT && d == RIGHT)	d=DNULL;
+		else if(getUnitDir() == DOWN && d == UP)	d=DNULL;	// beam blocking
+		else{
+			target->removeUnit();
+			cout << "[Laser] BlockMirror " << (char)('A'+row) << " " << col+1 << " is Destroyed" << endl;
+			d=DNULL;
+		}	//block destroy
+		return 0;
+	case TRI:
+		switch(d){
+		case LEFT:
+			if(getUnitDir() == DOWN)	d=DOWN;
+			else if(getUnitDir() == RIGHT)	d=UP;
+			break;
+		case DOWN:
+			if(getUnitDir() == RIGHT)	d=RIGHT;
+			else if(getUnitDir() == UP)		d=LEFT;
+			break;
+		case RIGHT:
+			if(getUnitDir() == UP)		d=UP;
+			else if(getUnitDir() == LEFT)		d=DOWN;
+			break;
+		case UP:
+			if(getUnitDir() == LEFT)		d=LEFT;
+			else if(getUnitDir() == DOWN)		d=RIGHT;
+			break;
+		}	// beam reflection
+		if(temp == d){	// temp == original direction
+			target->removeUnit();
+			cout << "[Laser] TriMirror " << (char)('A'+row) << " " << col+1 << " is Destroyed" << endl;
+			d=DNULL;
+		}	//Tri destroy
+		return 0;
+	case SPLIT:
+		switch(d){
+		case LEFT:
+			if(getUnitDir() == DOWN)	d=DOWN;
+			else if(getUnitDir() == RIGHT)	d=UP;
+			break;
+		case DOWN:
+			if(getUnitDir() == RIGHT)	d=RIGHT;
+			else if(getUnitDir() == UP)		d=LEFT;
+			break;
+		case RIGHT:
+			if(getUnitDir() == UP)		d=UP;
+			else if(getUnitDir() == LEFT)		d=DOWN;
+			break;
+		case UP:
+			if(getUnitDir() == LEFT)		d=LEFT;
+			else if(getUnitDir() == DOWN)		d=RIGHT;
+			break;
+		}	// beam reflection
+		if(temp == d){	// temp == original direction
+			target->removeUnit();
+			cout << "[Laser] SplitMirror " << (char)('A'+row) << " " << col+1 << " is Destroyed" << endl;
+			d=DNULL;
+		}	//Split destroy
+		else{		// reflects and penetrate beam
+			
+		}
+		return 0;
+	case HYPER:
+		switch(d){
+		case LEFT:
+			target->getUnitDir() == UP ? d=DOWN : d=UP;
+			break;
+		case DOWN:
+			target->getUnitDir() == UP ? d=LEFT : d=RIGHT;
+			break;
+		case RIGHT:
+			target->getUnitDir() == UP ? d=UP : d=DOWN;
+			break;
+		case UP:
+			target->getUnitDir() == UP ? d=RIGHT : d=LEFT;
+			break;
+		}	// beam reflection
+		return 0;
 }

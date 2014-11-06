@@ -193,15 +193,15 @@ bool Board::UnitAction(int r, int c, int a){	// boardRow, boardCol, actionType
 
 
 
-bool Board::launchLaser(){
+int Board::launchLaser(UnitType u){	// 0 - nothing, 1 : PURPLE win, 2 : BLUE win, 3 : DRAW
 	int r, c;
-	Direction d;
-	ongoingTeam==PURPLE ? r=c=0:r=c=8;
-	d=chessboard[r][c]->getUnitDir();
-	bool win=false;
-
+	if(ongoingTeam == PURPLE)
+		u==ATTACK ? r=0, c=0 : r=0, c=8;
+	else
+		u==ATTACK ? r=8, c=8 : r=8, c=0;	// Unit Selection
+	Direction d=chessboard[r][c]->getUnitDir();
 	statusboard->resetBeam();	// reset beam[][]
-
+	int win=0;
 	do{
 		switch(d){
 		case UP:	r--;	break;
@@ -211,94 +211,14 @@ bool Board::launchLaser(){
 		}	// Direction setting
 
 		if(r>=9 || r<0 || c>=9 || c<0)	break;	//Out of board
-		win = beamCurCell(r, c, d);
+		if(chessboard[r][c]->getUnitType() == UNULL)
+			statusboard->setBeam(u);
+		else
+			win += chessboard[r][c]->beamCurCell(d, u);
 	}while(d!=DNULL);		// no way to move beam
 	
-	statusboard->setCell(chessboard);	// setting synchronous
-	statusboard->printBeam();
-	if(win){		// game over
-		if(chessboard[r][c]->getUnitTeam() == PURPLE)
-			cout << "Player 2's Victory!" << endl;
-		else
-			cout << "Player 1's Victory!" << endl;
-	}
 	return win;		// whether game is over
 }
-
-
-bool Board::beamCurCell(int r, int c, Direction& d){
-	Cell* target=chessboard[r][c];
-	Direction temp=d;
-	char tempc=r+'A';	// for printing [Log]
-
-	switch(target->getUnitType()){
-	case KING:
-		d=DNULL;
-		cout << "[Laser] King of Player " << (target->getUnitTeam() == PURPLE ? 1:2) << "is defeated" << endl;
-		return true;	// game over
-
-	case LASER:
-		d=DNULL;
-		return false;	// laser nothing happen
-	case BLOCK:
-		if(target->getUnitDir() == RIGHT && d == LEFT)	d=DNULL;
-		else if(target->getUnitDir() == UP && d == DOWN)	d=DNULL;
-		else if(target->getUnitDir() == LEFT && d == RIGHT)	d=DNULL;
-		else if(target->getUnitDir() == DOWN && d == UP)	d=DNULL;	// beam blocking
-		else{
-			target->removeUnit();
-			cout << "[Laser] BlockMirror " << tempc << " " << c+1 << " is Destroyed" << endl;
-			d=DNULL;
-		}	//block destroy
-		return false;
-	case TRI:
-		switch(d){
-		case LEFT:
-			if(target->getUnitDir() == DOWN)	d=DOWN;
-			else if(target->getUnitDir() == RIGHT)	d=UP;
-			break;
-		case DOWN:
-			if(target->getUnitDir() == RIGHT)	d=RIGHT;
-			else if(target->getUnitDir() == UP)		d=LEFT;
-			break;
-		case RIGHT:
-			if(target->getUnitDir() == UP)		d=UP;
-			else if(target->getUnitDir() == LEFT)		d=DOWN;
-			break;
-		case UP:
-			if(target->getUnitDir() == LEFT)		d=LEFT;
-			else if(target->getUnitDir() == DOWN)		d=RIGHT;
-			break;
-		}	// beam reflection
-		if(temp == d){	// temp == original direction
-			target->removeUnit();
-			cout << "[Laser] TriMirror " << tempc << " " << c+1 << " is Destroyed" << endl;
-			d=DNULL;
-		}	//Tri destroy
-		return false;
-	case HYPER:
-		switch(d){
-		case LEFT:
-			target->getUnitDir() == UP ? d=DOWN : d=UP;
-			break;
-		case DOWN:
-			target->getUnitDir() == UP ? d=LEFT : d=RIGHT;
-			break;
-		case RIGHT:
-			target->getUnitDir() == UP ? d=UP : d=DOWN;
-			break;
-		case UP:
-			target->getUnitDir() == UP ? d=RIGHT : d=LEFT;
-			break;
-		}	// beam reflection
-		return false;
-	case UNULL:	//empty cell
-		statusboard->setBeam(r, c);
-		return false;
-	}
-	return false;
-}
-
 
 
 void Board::startGame(){
