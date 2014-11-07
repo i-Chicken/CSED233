@@ -109,16 +109,16 @@ void Board::showBeam(){		// see StatusBoard.printBeam
 	statusboard->printBeam();
 }
 
-void Board::UnitSelect(int& r, int& c){
+void Board::selectUnit(int& r, int& c){
+	cout << "Player " << (ongoingTeam == PURPLE ? 1:2) << "'s turn!" << endl << "Which Unit do you want to control? << endl;
 	do{
-		if(ongoingTeam == PURPLE)
-			cout << "Player 1's turn!" << endl << "Which Unit do you want to control?" << endl;
-		else
-			cout << "Player 2's turn!" << endl << "Which Unit do you want to control?" << endl;
-
 		InputPosition(r, c);
 		if(chessboard[r][c]->getUnitTeam() != ongoingTeam){		// NOT ongoingTeam's Unit
 			cout << "[System] Cannot control object" << endl;
+			continue;
+		}
+		else if(chessboard[r][c]->isUnitStun()){
+			cout << "[System] Unit is Stunned. choose another unit" << endl;
 			continue;
 		}
 		break;
@@ -126,7 +126,7 @@ void Board::UnitSelect(int& r, int& c){
 }
 
 
-int Board::ActionSelect(int r, int c){
+int Board::selectAction(int r, int c){
 	Cell* target=chessboard[r][c];
 	int action;
 	switch(target->getUnitType()){
@@ -145,7 +145,7 @@ int Board::ActionSelect(int r, int c){
 	return action;		// returnType 1 == MOVE,  2 == ROTATE
 }
 
-bool Board::UnitAction(int r, int c, int a){	// boardRow, boardCol, actionType
+bool Board::commandUnit(int r, int c, int a){	// boardRow, boardCol, actionType
 	int row, col;
 
 	switch(a){
@@ -193,13 +193,12 @@ bool Board::UnitAction(int r, int c, int a){	// boardRow, boardCol, actionType
 
 
 
-int Board::launchLaser(UnitType u){	// 0 - nothing, 1 : PURPLE win, 2 : BLUE win, 3 : DRAW
+int Board::launchLaser(UnitType u, Direction d, int round){	// 0 - nothing, 1 : PURPLE win, 2 : BLUE win, 3 : DRAW
 	int r, c;
 	if(ongoingTeam == PURPLE)
 		u==ATTACK ? r=0, c=0 : r=0, c=8;
 	else
 		u==ATTACK ? r=8, c=8 : r=8, c=0;	// Unit Selection
-	Direction d=chessboard[r][c]->getUnitDir();
 	statusboard->resetBeam();	// reset beam[][]
 	int win=0;
 	do{
@@ -211,36 +210,49 @@ int Board::launchLaser(UnitType u){	// 0 - nothing, 1 : PURPLE win, 2 : BLUE win
 		}	// Direction setting
 
 		if(r>=9 || r<0 || c>=9 || c<0)	break;	//Out of board
+		Direction dtemp=d;
 		if(chessboard[r][c]->getUnitType() == UNULL)
 			statusboard->setBeam(u);
 		else
-			win += chessboard[r][c]->beamCurCell(d, u);
+			win += chessboard[r][c]->beamCurCell(d, u, round);
+		if(d!=DNULL && chessboard[r][c]->getUnitType() == SPLIT)
+			win += launchLaser(u, dtemp, round);
 	}while(d!=DNULL);		// no way to move beam
-	
 	return win;		// whether game is over
 }
 
-
+UnitType Board::selectLaser(){
+	int a;
+	cout << "Which Laser do you want to launch?" << endl;
+	cout << "1. Attack\t2.Stun" << endl;
+	InputSelection(a);
+	return (a == 1 ? ATTACK : STUN);
+}
 void Board::startGame(){
-	bool win=false;
+	int win=0;
 	int row, col;
 
 	cout << "[System] Initializing Game.." << endl;
 	initGame();
 	cout << "[System] Complete Initializing." << endl;
-	while(!win){
+	while(win == 0){
 		showBoard();
-
-		UnitSelect(row, col);
-		int actionType = ActionSelect(row, col);		//action select
-		bool validAction = UnitAction(row, col, actionType);	// action perform
+		selectUnit(row, col);
+		int actionType = selectAction(row, col)//action select
+		bool validAction = commandUnit(row, col, actionType);	// action perform
 		if(validAction == false){
 			cout << "[System] Unable command. Try again" << endl;
 			continue;
 		}
-		win=launchLaser();		//laser launch
-
+		UnitType u=selectLaser();
+		win=launchLaser(u);		//laser launch
+		showBeam();
+		if(win == 1)
+			cout << "Player 2 Win! " << endl;
+		else if(win == 2)
+			cout << "Player 1 win! " << endl;
+		else
+			cout << "Draw ! " << endl;
 		ongoingTeam == PURPLE ? ongoingTeam=BLUE : ongoingTeam=PURPLE;	//change team
 	}
-
 }

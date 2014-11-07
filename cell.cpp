@@ -119,14 +119,21 @@ void Cell::swapWith(Cell* target){
 }
 
 
-int Cell::beamCurCell(Direction& d, UnitType u){
+int Cell::beamCurCell(Direction& d, UnitType u, int round){
 	Direction temp=d;
 
 	switch(unittype){
 	case KING:
 		d=DNULL;
-		cout << "[Laser] King of Player " << (team == PURPLE ? 1:2) << "is defeated" << endl;
-		return (team == PURPLE ? 1:2);	// game over
+		if(u==ATTACK){
+			cout << "[System] King of Player " << (team == PURPLE ? 1:2) << "is defeated" << endl;
+			return (team == PURPLE ? 1:2);	// game over
+		}
+		else{
+			cout << "[System] Player " << (team == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
+			unit->stunUnit(round);	
+			return 0;
+		}
 	case ATTACK:
 	case STUN:
 		d=DNULL;
@@ -136,11 +143,16 @@ int Cell::beamCurCell(Direction& d, UnitType u){
 		else if(getUnitDir() == UP && d == DOWN)	d=DNULL;
 		else if(getUnitDir() == LEFT && d == RIGHT)	d=DNULL;
 		else if(getUnitDir() == DOWN && d == UP)	d=DNULL;	// beam blocking
-		else{
+		else if(u==ATTACK){
 			target->removeUnit();
-			cout << "[Laser] BlockMirror " << (char)('A'+row) << " " << col+1 << " is Destroyed" << endl;
+			cout << "[System] BlockMirror at (" << (char)('A'+row) << " " << col+1 << ") is Destroyed" << endl;
 			d=DNULL;
 		}	//block destroy
+		else{
+			cout << "[System] Player " << (team == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
+			unit->stunUnit(round);	
+			d=DNULL;
+		}	// block stun
 		return 0;
 	case TRI:
 		switch(d){
@@ -162,10 +174,16 @@ int Cell::beamCurCell(Direction& d, UnitType u){
 			break;
 		}	// beam reflection
 		if(temp == d){	// temp == original direction
-			target->removeUnit();
-			cout << "[Laser] TriMirror " << (char)('A'+row) << " " << col+1 << " is Destroyed" << endl;
-			d=DNULL;
-		}	//Tri destroy
+			if(u == ATTACK){
+				removeUnit();
+				cout << "[System] TriMirror (" << (char)('A'+row) << " " << col+1 << ") is Destroyed" << endl;
+			}	// tri destroy
+			else{
+				unit->stunUnit(round);
+				cout << "[System] Player " << (team == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
+			}	// tri stun
+		}
+		d=DNULL;
 		return 0;
 	case SPLIT:
 		switch(d){
@@ -187,12 +205,15 @@ int Cell::beamCurCell(Direction& d, UnitType u){
 			break;
 		}	// beam reflection
 		if(temp == d){	// temp == original direction
-			target->removeUnit();
-			cout << "[Laser] SplitMirror " << (char)('A'+row) << " " << col+1 << " is Destroyed" << endl;
+			if(u == ATTACK){
+				removeUnit();
+				cout << "[System] SplitMirror (" << (char)('A'+row) << " " << col+1 << ") is Destroyed" << endl;
+			}	// tri destroy
+			else{
+				unit->stunUnit(round);
+				cout << "[System] Player " << (team == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
+			}	// tri stun
 			d=DNULL;
-		}	//Split destroy
-		else{		// reflects and penetrate beam
-			
 		}
 		return 0;
 	case HYPER:
