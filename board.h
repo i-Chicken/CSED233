@@ -19,7 +19,7 @@ private:
 	void showBeam();
 	void selectUnit(int&, int&);	// input unit from user
 	int selectAction(int, int);		// input action from user
-    UnitType selectLaser();
+    UnitType selectLaser(int&, int&);
 	bool commandUnit(int, int, int);	// unit moves or rotate
 	int launchLaser(UnitType, Direction, int, int);
 	bool beamCurCell(int, int, Direction&);

@@ -25,7 +25,7 @@ void InputPosition(int& r, int& c){	//using Reference Type
 		cin >> rt >> ct;
 		rt>='a'?r=(int)(rt-'a') : r=(int)(rt-'A');		// make small alphabet
         c=ct-1;
-		if(cin.fail() || ct<0 || ct>=MAX_RANGE || rt>=MAX_RANGE || rt<0){
+		if(cin.fail() || c<0 || c>=MAX_RANGE || r>=MAX_RANGE || r<0){
 			cout << "[System] Input Format of position is \"Row Col|\"."<<endl;
 			cout << "        ex) D 4, e 2, or etc." << endl;
 			cin.clear();		// flag 0
@@ -68,11 +68,13 @@ Board::~Board(){
 void Board::initGame(){	//setting board
 	chessboard[0][0]->setCell(new AttackLaser(DOWN, PURPLE, 0, 0), false);
 	chessboard[0][1]->setCell(NULL, false);	// Laser surround
-	chessboard[0][1]->setCell(NULL, false);	// Laser surround
+	chessboard[1][0]->setCell(NULL, false);	// Laser surround
 	chessboard[0][4]->setCell(new BlockMirror(DOWN, PURPLE, 0, 4), false);
 	chessboard[0][5]->setCell(new King(PURPLE, 0, 5), false);
 	chessboard[0][6]->setCell(new BlockMirror(DOWN, PURPLE, 0, 6), false);
 	chessboard[0][8]->setCell(new StunLaser(DOWN, PURPLE, 0, 8), false);
+    chessboard[1][8]->setCell(NULL, false); // Laser surround
+    chessboard[0][7]->setCell(NULL, false); // Laser surround
 	chessboard[1][7]->setCell(new SplitMirror(DOWN, PURPLE, 1, 7), false);
 	chessboard[3][0]->setCell(new TriMirror(RIGHT, PURPLE, 3, 0), false);
 	chessboard[3][2]->setCell(new TriMirror(LEFT, BLUE, 3, 2), false);
@@ -88,13 +90,15 @@ void Board::initGame(){	//setting board
 	chessboard[5][8]->setCell(new TriMirror(LEFT, BLUE, 5, 8), false);
 	chessboard[7][1]->setCell(new SplitMirror(UP, BLUE, 7, 1), false);
 	chessboard[8][0]->setCell(new StunLaser(UP, BLUE, 8, 0), false);
+    chessboard[7][0]->setCell(NULL, false); // Laser surround
+    chessboard[8][1]->setCell(NULL, false); // Laser surround
 	chessboard[8][2]->setCell(new BlockMirror(UP, BLUE, 8, 2), false);
 	chessboard[8][3]->setCell(new King(BLUE, 8, 3), false);
 	chessboard[8][4]->setCell(new BlockMirror(UP, BLUE, 8, 4), false);
 	chessboard[8][8]->setCell(new AttackLaser(UP, BLUE, 8, 8), false);
 	chessboard[7][8]->setCell(NULL, false);	// Laser surround
 	chessboard[8][7]->setCell(NULL, false);	// Laser surround
-    round=0;
+    round=1;
     ongoingTeam=PURPLE;
 }
 
@@ -215,12 +219,19 @@ int Board::launchLaser(UnitType u, Direction d, int r, int c){	// 0 - nothing, 1
 	return win;		// whether game is over
 }
 
-UnitType Board::selectLaser(){
+UnitType Board::selectLaser(int& r, int& c){
 	int a;
 	cout << "Which Laser do you want to launch?" << endl;
 	cout << "1. Attack\t2.Stun" << endl;
 	InputSelection(a);
-	return (a == 1 ? ATTACK : STUN);
+    if(a == 1){
+        ongoingTeam == PURPLE ? r=0, c=0 : r=8, c=8;
+       	return ATTACK;
+    }
+    else{
+        ongoingTeam == PURPLE ? r=0, c=8 : r=8, c=0;
+        return STUN;
+    }
 }
 void Board::startGame(){
 	int win=0;
@@ -237,14 +248,15 @@ void Board::startGame(){
 			cout << "[System] Unable command. Try again" << endl;
 			continue;
 		}
-		UnitType u=selectLaser();
+        statusboard->setCell(chessboard);
+		UnitType u=selectLaser(row, col);
 		win=launchLaser(u, chessboard[row][col]->getUnitDir(), row, col);		//laser launch
 		showBeam();
 		if(win == 1)
 			cout << "Player 2 Win! " << endl;
 		else if(win == 2)
 			cout << "Player 1 win! " << endl;
-		else
+		else if(win == 3)
 			cout << "Draw ! " << endl;
 		ongoingTeam == PURPLE ? ongoingTeam=BLUE : ongoingTeam=PURPLE;	//change team
         round++;

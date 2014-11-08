@@ -114,16 +114,16 @@ void StatusBoard::setCell(Cell*** chessboard){
 						status[i*2][j*2]		= 'T';
 						status[i*2][j*2+1]	= '/';
 						status[i*2+1][j*2]	= '/';
-						status[i*2+1][j*2+1]	= '\0';
+						status[i*2+1][j*2+1]	= ' ';
 						break;
 					case RIGHT:
 						status[i*2][j*2]		= '\\';
-						status[i*2][j*2+1]	= '\0';
+						status[i*2][j*2+1]	= ' ';
 						status[i*2+1][j*2]	= 'T';
 						status[i*2+1][j*2+1]	= '\\';
 						break;
 					case UP:
-						status[i*2][j*2]		= '\0';
+						status[i*2][j*2]		= ' ';
 						status[i*2][j*2+1]	= '/';
 						status[i*2+1][j*2]	= '/';
 						status[i*2+1][j*2+1]	= 'T';
@@ -131,7 +131,7 @@ void StatusBoard::setCell(Cell*** chessboard){
 					case LEFT:
 						status[i*2][j*2]		= '\\';
 						status[i*2][j*2+1]	= 'T';
-						status[i*2+1][j*2]	= '\0';
+						status[i*2+1][j*2]	= ' ';
 						status[i*2+1][j*2+1]	= '\\';
 						break;
 					}
@@ -142,16 +142,16 @@ void StatusBoard::setCell(Cell*** chessboard){
 						status[i*2][j*2]		= 't';
 						status[i*2][j*2+1]	= '/';
 						status[i*2+1][j*2]	= '/';
-						status[i*2+1][j*2+1]	= '\0';
+						status[i*2+1][j*2+1]	= ' ';
 						break;
 					case RIGHT:
 						status[i*2][j*2]		= '\\';
-						status[i*2][j*2+1]	= '\0';
+						status[i*2][j*2+1]	= ' ';
 						status[i*2+1][j*2]	= 't';
 						status[i*2+1][j*2+1]	= '\\';
 						break;
 					case UP:
-						status[i*2][j*2]		= '\0';
+						status[i*2][j*2]		= ' ';
 						status[i*2][j*2+1]	= '/';
 						status[i*2+1][j*2]	= '/';
 						status[i*2+1][j*2+1]	= 't';
@@ -159,7 +159,7 @@ void StatusBoard::setCell(Cell*** chessboard){
 					case LEFT:
 						status[i*2][j*2]		= '\\';
 						status[i*2][j*2+1]	= 't';
-						status[i*2+1][j*2]	= '\0';
+						status[i*2+1][j*2]	= ' ';
 						status[i*2+1][j*2+1]	= '\\';
 						break;
 					}
@@ -174,16 +174,16 @@ void StatusBoard::setCell(Cell*** chessboard){
 						status[i*2][j*2]		= 'S';
 						status[i*2][j*2+1]	= '/';
 						status[i*2+1][j*2]	= '/';
-						status[i*2+1][j*2+1]	= '\0';
+						status[i*2+1][j*2+1]	= ' ';
 						break;
 					case RIGHT:
 						status[i*2][j*2]		= '\\';
-						status[i*2][j*2+1]	= '\0';
+						status[i*2][j*2+1]	= ' ';
 						status[i*2+1][j*2]	= 'S';
 						status[i*2+1][j*2+1]	= '\\';
 						break;
 					case UP:
-						status[i*2][j*2]		= '\0';
+						status[i*2][j*2]		= ' ';
 						status[i*2][j*2+1]	= '/';
 						status[i*2+1][j*2]	= '/';
 						status[i*2+1][j*2+1]	= 'S';
@@ -191,7 +191,7 @@ void StatusBoard::setCell(Cell*** chessboard){
 					case LEFT:
 						status[i*2][j*2]		= '\\';
 						status[i*2][j*2+1]	= 'S';
-						status[i*2+1][j*2]	= '\0';
+						status[i*2+1][j*2]	= ' ';
 						status[i*2+1][j*2+1]	= '\\';
 						break;
 					}
@@ -202,16 +202,16 @@ void StatusBoard::setCell(Cell*** chessboard){
 						status[i*2][j*2]		= 's';
 						status[i*2][j*2+1]	= '/';
 						status[i*2+1][j*2]	= '/';
-						status[i*2+1][j*2+1]	= '\0';
+						status[i*2+1][j*2+1]	= ' ';
 						break;
 					case RIGHT:
 						status[i*2][j*2]		= '\\';
-						status[i*2][j*2+1]	= '\0';
+						status[i*2][j*2+1]	= ' ';
 						status[i*2+1][j*2]	= 's';
 						status[i*2+1][j*2+1]	= '\\';
 						break;
 					case UP:
-						status[i*2][j*2]		= '\0';
+						status[i*2][j*2]		= ' ';
 						status[i*2][j*2+1]	= '/';
 						status[i*2+1][j*2]	= '/';
 						status[i*2+1][j*2+1]	= 's';
@@ -219,7 +219,7 @@ void StatusBoard::setCell(Cell*** chessboard){
 					case LEFT:
 						status[i*2][j*2]		= '\\';
 						status[i*2][j*2+1]	= 's';
-						status[i*2+1][j*2]	= '\0';
+						status[i*2+1][j*2]	= ' ';
 						status[i*2+1][j*2+1]	= '\\';
 						break;
 					}
@@ -367,10 +367,10 @@ void StatusBoard::setCell(Cell*** chessboard){
 				}
 				break;		// for StunLaser
 			default:
-				status[i*2][j*2]		= '\0';
-				status[i*2][j*2+1]		= '\0';
-				status[i*2+1][j*2]		= '\0';
-				status[i*2+1][j*2+1]	= '\0';
+				status[i*2][j*2]		= ' ';
+				status[i*2][j*2+1]		= ' ';
+				status[i*2+1][j*2]		= ' ';
+				status[i*2+1][j*2+1]	= ' ';
 				break;		// for Empty Cell
 			}
 		}
@@ -390,9 +390,8 @@ void StatusBoard::printStatus(Cell*** chessboard){
 
 	for(int i=0; i < boardRows; i++){
 		for(int j=-1; j < boardCols; j++){
-			char r='A'+i;
 			if(j == -1)		// Row Index
-				cout << " " << r << " ";
+				cout << " " << (char)('A'+i) << " ";
 			else
 				cout << status[i*2][j*2] << status[i*2][j*2+1] << " ";
 		}

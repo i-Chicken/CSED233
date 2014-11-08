@@ -231,4 +231,5 @@ int Cell::beamCurCell(Direction& d, UnitType u, int round){
 		}	// beam reflection
 		return 0;
     }
+    return 0;
 }

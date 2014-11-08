@@ -5,7 +5,7 @@ Unit::Unit(UnitType u, Team t, int r, int c){
 	team=t;
 	row=r;
 	col=c;
-	stun=0;
+	stun=-1;
 }
 
 Team Unit::getTeam(){	return team;	}
@@ -18,7 +18,7 @@ void Unit::moveUnit(int r, int c){
 
 void Unit::stunUnit(int s){	stun=s;	}
 bool Unit::isStun(int round){
-	if(round - stun <= 2)
+	if(round - stun < 2)
 		return true;
 	return false;
 }
