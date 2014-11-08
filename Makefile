@@ -1,4 +1,4 @@
-target: assn1.o cell.o status.o board.o unit.o
+target: assn2.o cell.o status.o board.o unit.o
 	g++ -o assn2.exe assn2.o cell.o status.o board.o unit.o
 assn2.o: unit.o cell.o status.o board.o
 	g++ -c assn2.cpp

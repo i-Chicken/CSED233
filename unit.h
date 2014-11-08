@@ -23,7 +23,7 @@ protected:
 
 class King : public Unit{
 public:
-	King(Team);
+	King(Team, int, int);
 };
 
 class Laser: public Unit{
@@ -60,7 +60,7 @@ public:
 	void setRotation(Direction d);
 };
 
-class TriMirror{
+class TriMirror: public Mirror{
 public:
 	TriMirror(Direction, Team, int, int);
 	void setRotation(Direction d);
@@ -72,7 +72,7 @@ public:
 	void setRotation(Direction d);
 };
 
-class HyperMirror{
+class HyperMirror:public Mirror{
 public:
 	HyperMirror(Direction, Team, int, int);	//UP, LEFT
 	void setRotation();

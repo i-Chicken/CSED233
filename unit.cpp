@@ -31,7 +31,7 @@ Laser::Laser(Direction d, UnitType u, Team t, int r, int c): Unit(u, t, r, c){
 
 Direction Laser::getDirection(){	return direction;	}
 
-AttackLaser::AttackLaser(Direction d, Team t, int r, int c): Laser(d, ATTACK, r, c){};
+AttackLaser::AttackLaser(Direction d, Team t, int r, int c): Laser(d, ATTACK, t, r, c){};
 
 void AttackLaser::setRotation(){
 	if(team == PURPLE)
@@ -40,7 +40,7 @@ void AttackLaser::setRotation(){
 		direction == UP ? direction = LEFT : direction = UP;
 }
 
-StunLaser::StunLaser(Direction d, Team t, int r, int c): Laser(d, STUN, r, c){};
+StunLaser::StunLaser(Direction d, Team t, int r, int c): Laser(d, STUN, t, r, c){};
 
 void StunLaser::setRotation(){
 	if(team == PURPLE)
