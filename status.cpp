@@ -419,7 +419,7 @@ void StatusBoard::resetBeam(){	// make all Zeros
 	}
 }
 
-void StatusBoard::setBeam(int r, int c, UnitType u){	// 1 - for Attack 2 - for Stun
+void StatusBoard::setBeam(UnitType u, int r, int c){	// 1 - for Attack 2 - for Stun
 	u == ATTACK ? beam[r][c] =1 : beam[r][c]=2;
 }
 

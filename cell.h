@@ -7,7 +7,6 @@ class Cell{
 public:
 	Cell(int, int);
 	~Cell();
-	bool movableTo();
 	void removeUnit();
 	void setCell(Unit*, bool);
 	void setUnitDir(Direction);
@@ -18,6 +17,7 @@ public:
 	Direction getUnitDir();
 	UnitType getUnitType();
 	bool isUnitStun(int);
+    int beamCurCell(Direction&, UnitType, int);
 private:
 	int row, col;
 	Unit* unit;

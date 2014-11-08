@@ -124,11 +124,11 @@ int Cell::beamCurCell(Direction& d, UnitType u, int round){
 	case KING:
 		d=DNULL;
 		if(u==ATTACK){
-			cout << "[System] King of Player " << (team == PURPLE ? 1:2) << "is defeated" << endl;
-			return (team == PURPLE ? 1:2);	// game over
+			cout << "[System] King of Player " << (getUnitTeam() == PURPLE ? 1:2) << "is defeated" << endl;
+			return ((getUnitTeam()) == PURPLE ? 1:2);	// game over
 		}
 		else{
-			cout << "[System] Player " << (team == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
+			cout << "[System] Player " << (getUnitTeam() == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
 			unit->stunUnit(round);	
 			return 0;
 		}
@@ -142,12 +142,12 @@ int Cell::beamCurCell(Direction& d, UnitType u, int round){
 		else if(getUnitDir() == LEFT && d == RIGHT)	d=DNULL;
 		else if(getUnitDir() == DOWN && d == UP)	d=DNULL;	// beam blocking
 		else if(u==ATTACK){
-			target->removeUnit();
+			removeUnit();
 			cout << "[System] BlockMirror at (" << (char)('A'+row) << " " << col+1 << ") is Destroyed" << endl;
 			d=DNULL;
 		}	//block destroy
 		else{
-			cout << "[System] Player " << (team == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
+			cout << "[System] Player " << (getUnitTeam() == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
 			unit->stunUnit(round);	
 			d=DNULL;
 		}	// block stun
@@ -178,7 +178,7 @@ int Cell::beamCurCell(Direction& d, UnitType u, int round){
 			}	// tri destroy
 			else{
 				unit->stunUnit(round);
-				cout << "[System] Player " << (team == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
+				cout << "[System] Player " << (getUnitTeam() == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
 			}	// tri stun
 		}
 		d=DNULL;
@@ -209,7 +209,7 @@ int Cell::beamCurCell(Direction& d, UnitType u, int round){
 			}	// tri destroy
 			else{
 				unit->stunUnit(round);
-				cout << "[System] Player " << (team == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
+				cout << "[System] Player " << (getUnitTeam() == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
 			}	// tri stun
 			d=DNULL;
 		}
@@ -217,17 +217,18 @@ int Cell::beamCurCell(Direction& d, UnitType u, int round){
 	case HYPER:
 		switch(d){
 		case LEFT:
-			target->getUnitDir() == UP ? d=DOWN : d=UP;
+			getUnitDir() == UP ? d=DOWN : d=UP;
 			break;
 		case DOWN:
-			target->getUnitDir() == UP ? d=LEFT : d=RIGHT;
+			getUnitDir() == UP ? d=LEFT : d=RIGHT;
 			break;
 		case RIGHT:
-			target->getUnitDir() == UP ? d=UP : d=DOWN;
+			getUnitDir() == UP ? d=UP : d=DOWN;
 			break;
 		case UP:
-			target->getUnitDir() == UP ? d=RIGHT : d=LEFT;
+			getUnitDir() == UP ? d=RIGHT : d=LEFT;
 			break;
 		}	// beam reflection
 		return 0;
+    }
 }

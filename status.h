@@ -20,6 +20,6 @@ private:
 	int boardRows;
 	int boardCols;
 	int** beam;
-}
+};
 
 #endif

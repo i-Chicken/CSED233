@@ -10,7 +10,7 @@ void InputPosition(int&, int&);	// check input validity
 
 class Board{
 public:
-	Board(StatusBoard*, int, int);
+	Board(StatusBoard*);
 	~Board();
 	void startGame();
 private: 
@@ -19,10 +19,12 @@ private:
 	void showBeam();
 	void selectUnit(int&, int&);	// input unit from user
 	int selectAction(int, int);		// input action from user
+    UnitType selectLaser();
 	bool commandUnit(int, int, int);	// unit moves or rotate
-	bool launchLaser();
+	int launchLaser(UnitType, Direction, int, int);
 	bool beamCurCell(int, int, Direction&);
 	int rows, cols;
+    int round;
 	Team ongoingTeam;
 	Cell*** chessboard;
 	StatusBoard* statusboard;
