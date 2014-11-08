@@ -414,13 +414,13 @@ void StatusBoard::printStatus(Cell*** chessboard){
 void StatusBoard::resetBeam(){	// make all Zeros
 	for(int i=0; i<boardRows; i++){
 		for(int j=0; j<boardCols; j++){
-			beam[i][j]=false;
+			beam[i][j]=0;
 		}
 	}
 }
 
-void StatusBoard::setBeam(int r, int c){	// 1 - for Attack 2 - for Stun
-	beam[r][c]=true;
+void StatusBoard::setBeam(int r, int c, UnitType u){	// 1 - for Attack 2 - for Stun
+	u == ATTACK ? beam[r][c] =1 : beam[r][c]=2;
 }
 
 void StatusBoard::printBeam(){
