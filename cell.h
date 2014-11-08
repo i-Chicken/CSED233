@@ -1,13 +1,15 @@
 #ifndef CELL_H
 #define CELL_H
 
+#include "unit.h"
+
 class Cell{
 public:
 	Cell(int, int);
 	~Cell();
 	bool movableTo();
 	void removeUnit();
-	void setCell(UnitType, Unit*, bool);
+	void setCell(Unit*, bool);
 	void setUnitDir(Direction);
 	bool movableTo(UnitType, int, int);
 	void moveTo(Cell*);
@@ -20,7 +22,6 @@ private:
 	int row, col;
 	Unit* unit;
 	bool accessible;
-
-}
+};
 
 #endif

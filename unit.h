@@ -5,8 +5,6 @@ enum Direction { UP, DOWN, RIGHT, LEFT, DNULL };
 enum Team { BLUE, PURPLE, TNULL };
 enum UnitType { KING, ATTACK, STUN, BLOCK, TRI, SPLIT, HYPER, UNULL };
 
-
-
 class Unit{
 public:
 	Unit(UnitType, Team, int, int);
@@ -77,7 +75,7 @@ public:
 class HyperMirror{
 public:
 	HyperMirror(Direction, Team, int, int);	//UP, LEFT
-	void setRotation(Direction d);
+	void setRotation();
 };
 
 #endif

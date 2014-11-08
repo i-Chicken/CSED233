@@ -7,7 +7,6 @@ Cell::Cell(int r, int c){
 	row=r;
 	col=c;
 	unit=NULL;
-	unittype=UNULL;
 	accessible=true;
 }
 /// Cell Constructor
@@ -18,7 +17,7 @@ Cell::~Cell(){
 ////////////////////////// Cell Deconstructor
 
 Team Cell::getUnitTeam(){
-	switch(unittype){
+	switch(getUnitType()){
 	case UNULL:
 		return TNULL;
 	default:
@@ -26,7 +25,7 @@ Team Cell::getUnitTeam(){
 	}	
 }
 Direction Cell::getUnitDir(){
-	switch(unittype){
+	switch(getUnitType()){
 	case KING:		return DNULL;
 	case ATTACK:
 	case STUN:
@@ -49,15 +48,13 @@ UnitType Cell::getUnitType(){
 
 
 void Cell::removeUnit(){
-	unittype=UNULL;
 	delete unit;
 	unit=NULL;
 	accessible=true;
 }
 /////////////////////////////// remove
 
-void Cell::setCell(UnitType u, Unit* o, bool a){
-	unittype=u;
+void Cell::setCell(Unit* o, bool a){
 	accessible=a;
 	unit=o;
 }
@@ -65,10 +62,12 @@ void Cell::setCell(UnitType u, Unit* o, bool a){
 
 
 void Cell::setUnitDir(Direction d){
-	switch(unittype){
+	switch(getUnitType()){
 	case ATTACK:
+        ((AttackLaser*)unit)->setRotation();
+        break;
 	case STUN:
-		((Laser*)unit)->setRotation();
+		((StunLaser*)unit)->setRotation();
 		break;
 	case BLOCK:
 		((BlockMirror*)unit)->setRotation(d);
@@ -91,7 +90,7 @@ bool Cell::movableTo(UnitType u, int r, int c){
 	switch(u){
 	case HYPER:
 		if(accessible == false && unit != NULL)	return false;
-		if(unittype == STUN || unittype == ATTACK)	return false;
+		if(getUnitType() == STUN || getUnitType() == ATTACK)	return false;
 		break;
 	default:
 		if(accessible == false)	return false;
@@ -101,9 +100,8 @@ bool Cell::movableTo(UnitType u, int r, int c){
 }
 
 void Cell::moveTo(Cell* target){
-	target->setCell(unittype, unit, false);
+	target->setCell(unit, false);
 	unit=NULL;
-	unittype=UNULL;
 	accessible=true;
 }
 
@@ -111,5 +109,5 @@ void Cell::moveTo(Cell* target){
 void Cell::swapWith(Cell* target){
 	Unit* temp=unit;
 	target->moveTo(this);	// Unit Moves : target -> this
-	target->setCell(temp->getUnitType(), temp, false);	// Unit Moves : this -> target
+	target->setCell(temp, false);	// Unit Moves : this -> target
 }
