@@ -10,7 +10,7 @@ public:
 	void removeUnit();
 	void setCell(Unit*, bool);
 	void setUnitDir(Direction);
-	bool movableTo(UnitType, int, int);
+	bool movableFrom(UnitType, int, int);
 	void moveTo(Cell*);
 	void swapWith(Cell*);
 	Team getUnitTeam();

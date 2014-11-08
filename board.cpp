@@ -150,17 +150,15 @@ int Board::selectAction(int r, int c){
 
 bool Board::commandUnit(int r, int c, int a){	// boardRow, boardCol, actionType
 	int row, col;
-    Cell* target;
     int action;
 
 	switch(a){
 	case 1:		// Unit moving;
 		cout << "Which posistion do you want it to Move?" << endl;
 		InputPosition(row, col);
-		target=chessboard[row][col];
-		if(target->movableTo(chessboard[r][c]->getUnitType(), r, c)){
-			target->moveTo(chessboard[row][col]);
-			cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << (char)('A'+r) << " " << c+1 << " => " << (char)('A'+row) << " " << col+1 << endl;
+		if(chessboard[row][col]->movableFrom(chessboard[r][c]->getUnitType(), r, c)){
+			chessboard[r][c]->moveTo(chessboard[row][col]);
+			cout << "[Log] Player " << ((chessboard[row][col]->getUnitTeam() == PURPLE) ? '1':'2') << " " << (char)('A'+r) << " " << c+1 << " => " << (char)('A'+row) << " " << col+1 << endl;
             return true;
 		}
 		else
@@ -177,7 +175,7 @@ bool Board::commandUnit(int r, int c, int a){	// boardRow, boardCol, actionType
 			InputSelection(action);
 			if(action == 1){
 				chessboard[r][c]->setUnitDir(DNULL);
-				cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << (char)('A'+r) << " " << c+1 << " ROTATE" << endl;
+				cout << "[Log] Player " << ((chessboard[r][c]->getUnitTeam() == PURPLE) ? '1':'2') << " " << (char)('A'+r) << " " << c+1 << " ROTATE" << endl;
 			}
 			else
 				return false;
@@ -188,8 +186,8 @@ bool Board::commandUnit(int r, int c, int a){	// boardRow, boardCol, actionType
 			cout << "Which direction do you want it to Rotate?" << endl;
 			cout << "1.LEFT		2.RIGHT" << endl;
 			InputSelection(action);
-			action == 1 ? target->setUnitDir(LEFT) : target->setUnitDir(RIGHT);
-			cout << "[Log] Player " << ((target->getUnitTeam() == PURPLE) ? '1':'2') << " " << (char)('A'+r) << " " << c+1 << " ROTATE" << endl;
+			action == 1 ? chessboard[r][c]->setUnitDir(LEFT) : chessboard[r][c]->setUnitDir(RIGHT);
+			cout << "[Log] Player " << ((chessboard[r][c]->getUnitTeam() == PURPLE) ? '1':'2') << " " << (char)('A'+r) << " " << c+1 << " ROTATE" << endl;
 			break;		
 	    }
 	return true;
@@ -197,8 +195,7 @@ bool Board::commandUnit(int r, int c, int a){	// boardRow, boardCol, actionType
 }
 
 int Board::launchLaser(UnitType u, Direction d, int r, int c){	// 0 - nothing, 1 : PURPLE win, 2 : BLUE win, 3 : DRAW
-	statusboard->resetBeam();	// reset beam[][]
-	int win=0;
+    int win=0;
 	do{
 		switch(d){
 		case UP:	r--;	break;
@@ -225,11 +222,21 @@ UnitType Board::selectLaser(int& r, int& c){
 	cout << "1. Attack\t2.Stun" << endl;
 	InputSelection(a);
     if(a == 1){
-        ongoingTeam == PURPLE ? r=0, c=0 : r=8, c=8;
+        if(ongoingTeam == PURPLE){
+            r=0; c=0;
+        }
+        else{
+            r=8; c=8;
+        }
        	return ATTACK;
     }
     else{
-        ongoingTeam == PURPLE ? r=0, c=8 : r=8, c=0;
+        if(ongoingTeam == PURPLE){
+            r=0;    c=8;
+        }
+        else{
+            r=8;    c=0;
+        }
         return STUN;
     }
 }
@@ -250,6 +257,7 @@ void Board::startGame(){
 		}
         statusboard->setCell(chessboard);
 		UnitType u=selectLaser(row, col);
+        statusboard->resetBeam();
 		win=launchLaser(u, chessboard[row][col]->getUnitDir(), row, col);		//laser launch
 		showBeam();
 		if(win == 1)

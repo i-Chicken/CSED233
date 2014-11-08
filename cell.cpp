@@ -85,7 +85,7 @@ void Cell::setUnitDir(Direction d){
 }
 
 
-bool Cell::movableTo(UnitType u, int r, int c){
+bool Cell::movableFrom(UnitType u, int r, int c){
 	if( (row-r)*(row-r) > 1 || (col-c)*(col-c) > 1)	return false;
 	switch(u){
 	case HYPER:
@@ -100,7 +100,7 @@ bool Cell::movableTo(UnitType u, int r, int c){
 }
 
 void Cell::moveTo(Cell* target){
-	if(target->getUnitType() == HYPER){
+	if(getUnitType() == HYPER){
 		swapWith(target);
 		return;
 	}
@@ -180,8 +180,8 @@ int Cell::beamCurCell(Direction& d, UnitType u, int round){
 				unit->stunUnit(round);
 				cout << "[System] Player " << (getUnitTeam() == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
 			}	// tri stun
+            d=DNULL;
 		}
-		d=DNULL;
 		return 0;
 	case SPLIT:
 		switch(d){
