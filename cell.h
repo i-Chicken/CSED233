@@ -17,7 +17,7 @@ public:
 	Team getUnitTeam();
 	Direction getUnitDir();
 	UnitType getUnitType();
-	bool isUnitStun();
+	bool isUnitStun(int);
 private:
 	int row, col;
 	Unit* unit;
