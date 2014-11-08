@@ -100,15 +100,11 @@ bool Cell::movableTo(UnitType u, int r, int c){
 }
 
 void Cell::moveTo(Cell* target){
-<<<<<<< HEAD
-	target->setCell(unit, false);
-=======
 	if(target->getUnitType() == HYPER){
 		swapWith(target);
 		return;
 	}
 	target->setCell(unittype, unit, false);
->>>>>>> board
 	unit=NULL;
 	accessible=true;
 }
@@ -123,8 +119,7 @@ void Cell::swapWith(Cell* target){
 
 int Cell::beamCurCell(Direction& d, UnitType u, int round){
 	Direction temp=d;
-
-	switch(unittype){
+	switch(getUnitType()){
 	case KING:
 		d=DNULL;
 		if(u==ATTACK){
