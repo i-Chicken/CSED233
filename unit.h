@@ -11,8 +11,8 @@ public:
 	Team getTeam();
 	UnitType getUnitType();
 	void moveUnit(int, int);
-	void stunUnit(int);
-	bool isStun(int);
+	void stunUnit(int);     // Unit stunned by laser
+	bool isStun(int);       // verify unit is stun
 protected:
 	Team team;
 	UnitType unittype;

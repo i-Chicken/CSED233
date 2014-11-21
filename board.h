@@ -22,7 +22,6 @@ private:
     UnitType selectLaser(int&, int&);
 	bool commandUnit(int, int, int);	// unit moves or rotate
 	int launchLaser(UnitType, Direction, int, int);
-	bool beamCurCell(int, int, Direction&);
 	int rows, cols;
     int round;
 	Team ongoingTeam;
