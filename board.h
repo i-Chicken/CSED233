@@ -11,6 +11,7 @@ void InputPosition(int&, int&);	// check input validity
 class Board{
 public:
 	Board(StatusBoard*);
+    Board(StatusBoard*, char*);
 	~Board();
 	void startGame();
 private: 

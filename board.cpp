@@ -55,6 +55,8 @@ Board::Board(StatusBoard* s){
 	}
 }		//Constructor
 
+Board::Board(StatusBoard *s, char* save){
+}
 Board::~Board(){
 	for(int i=rows-1; i>=0; i--){
 		for(int j=cols-1; j>=0; j--){

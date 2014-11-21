@@ -11,4 +11,4 @@ board.o: board.cpp board.h
 unit.o: unit.h unit.cpp
 	g++ -c unit.cpp
 clean:
-	rm *.o
+	rm *.o *.exe
