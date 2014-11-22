@@ -1,7 +1,15 @@
 #ifndef CELL_H
 #define CELL_H
 
-#include "unit.h"
+#include "king.h"
+#include "laser.h"
+#include "attacklaser.h"
+#include "stunlaser.h"
+#include "mirror.h"
+#include "blockmirror.h"
+#include "trimirror.h"
+#include "hypermirror.h"
+#include "splitmirror.h"
 
 class Cell{
 public:

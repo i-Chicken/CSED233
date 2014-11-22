@@ -10,7 +10,7 @@ using namespace std;
 
 extern void InputPosition(int&, int&);
 
-char InputSelection(char*);
+char InputSelection(string);
 bool gameSave(fstream, Board*);
 bool isValidFile(fstream);
 bool isInputValid(char input, const char* restrain);
@@ -104,8 +104,9 @@ bool isInputValid(char input, const char* restrain){
     return false;
 }
 
-char InputSelection(char* str){
+char InputSelection(string restrain){
     char result;
+	char* str=(char*)restrain.c_str(); 
     do{
         cin >> result;
         cin.clear();
