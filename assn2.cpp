@@ -40,7 +40,7 @@ int main(){
         else if(input == '2'){
             cout << "[System] Loading Game..." << endl;
             char* savedata=readFile(savefile);
-            cout << savedata << "asdfasf" << endl;
+            cout << savedata << endl;
             if(savedata==NULL){
                 cout << "[System] Failure to Load Game!" << endl;
                 s = new StatusBoard();
@@ -49,8 +49,8 @@ int main(){
             else{
                 s = new StatusBoard();
                 b = new Board(s, savedata);
-                savefile.close();
             }
+            savefile.close();
         }   ////////////////// Load Game from file
         else if(input == 0) break;
 		b->startGame();	//game start
@@ -70,29 +70,17 @@ char* readFile(ifstream& file){
     char col;
     string result="";
 
+    file >> team;
     while(!file.eof()){
-        file >> team;
+        if(!isInputValid(team, "12\0") || file.eof())           return NULL;
         file >> unit;
-        cout << team << unit << endl;
-        cout << file.eof()<<endl;
-        file >> team;
-        file >> unit;
-        cout << team << unit << endl;
-        cout << file.eof()<<endl;
-        if(isInputValid(team, "12\0") != false || !file.eof())           return NULL;
-        file >> unit;
-        cout << team << unit << endl;
-        cout << file.eof()<<endl;
-        if(isInputValid(unit, "KASBHTP\0") != false || !file.eof())      return NULL;
+        if(!isInputValid(unit, "kasbhtp\0") || file.eof())      return NULL;
         file >> row;
-        cout << team << unit << endl;
-        cout << file.eof()<<endl;
-        if(isInputValid(row, "012345678\0") != false || !file.eof())     return NULL;
+        if(!isInputValid(row, "012345678\0") || file.eof())     return NULL;
         file >> col;
-        cout << team << unit << endl;
-        cout << file.eof()<<endl;
-        if(isInputValid(col, "012345678\0") != false)     return NULL;
+        if(!isInputValid(col, "012345678\0"))     return NULL;
         result=result + team + unit + row + col;
+        file >> team;
     }
     return (char*)result.c_str();
 }
