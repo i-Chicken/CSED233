@@ -41,21 +41,32 @@ Board::Board(StatusBoard* s){
 	statusboard=s;
 	rows=MAX_RANGE;
 	cols=MAX_RANGE;
-
 	chessboard = new Cell**[rows];
-
 	for(int i=0; i<rows; i++){
 		chessboard[i] = new Cell*[cols];
 	}
-
 	for(int i=0; i<rows; i++){
 		for(int j=0; j<cols; j++){
 			chessboard[i][j] = new Cell(i, j);	// one Cell for one destrict
 		}
 	}
+    initGame();
 }		//Constructor
 
-Board::Board(StatusBoard *s, char* save){
+Board::Board(StatusBoard *s, char* savedata){
+	statusboard=s;
+	rows=MAX_RANGE;
+	cols=MAX_RANGE;
+	chessboard = new Cell**[rows];
+	for(int i=0; i<rows; i++){
+		chessboard[i] = new Cell*[cols];
+	}
+	for(int i=0; i<rows; i++){
+		for(int j=0; j<cols; j++){
+			chessboard[i][j] = new Cell(i, j);	// one Cell for one destrict
+		}
+	}
+    initGame(savedata); 
 }
 Board::~Board(){
 	for(int i=rows-1; i>=0; i--){
@@ -67,7 +78,42 @@ Board::~Board(){
 	delete[] chessboard;
 }		//Destructor 
 
+void Board::initGame(char* savedata){
+    /* save data index
+    [0] -> stageTurn
+    [1+6*i] -> unitTeam
+    [1+6*i+1] -> UnitType
+    [1+6*i+2] -> stun
+    [1+6*i+3] -> direction
+    [1+6*i+4] -> row
+    [1+6*i+5] -> col
+       */
+    cout << "[System] Initializing Game.." << endl;
+
+    for(int i=0; savedata[1+6*i] != 0; i++){
+    
+        switch(savedata[1+6*i+1]){
+        case 'K':
+            //chessboard[savedata[1+4*i+2]-'0'][savedata[1+4*i+3]-'0']->setCell(new King(
+            break;
+        case 'A':
+            break;
+        case 'S':
+            break;
+        case 'B':
+            break;
+        case 'H':
+            break;
+        case 'T':
+            break;
+        case 'P':
+            break;
+        }
+    }
+    cout << "[System] Complete Initializing" << endl;
+}
 void Board::initGame(){	//setting board
+    cout << "[System] Initializing Game.." << endl;
 	chessboard[0][0]->setCell(new AttackLaser(DOWN, PURPLE, 0, 0), false);
 	chessboard[0][1]->setCell(NULL, false);	// Laser surround
 	chessboard[1][0]->setCell(NULL, false);	// Laser surround
@@ -102,6 +148,7 @@ void Board::initGame(){	//setting board
 	chessboard[8][7]->setCell(NULL, false);	// Laser surround
     round=1;
     ongoingTeam=PURPLE;
+    cout << "[System] Complete Initializing" << endl;
 }
 
 

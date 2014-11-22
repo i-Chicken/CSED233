@@ -40,13 +40,15 @@ int main(){
         else if(input == '2'){
             cout << "[System] Loading Game..." << endl;
             char* savedata=readFile(savefile);
-            cout << savedata << endl;
             if(savedata==NULL){
                 cout << "[System] Failure to Load Game!" << endl;
                 s = new StatusBoard();
                 b = new Board(s);
             }
             else{
+                for(int i=0; savedata[i] != 0; i++)
+                    cout << ((int)savedata[i]) << " ";
+                cout << "asdflaksjdflkjasf" << endl;
                 s = new StatusBoard();
                 b = new Board(s, savedata);
             }
@@ -63,26 +65,36 @@ int main(){
 	return 0;
 }
 
-char* readFile(ifstream& file){
+char* readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UNITi)(stuni)(DIRi)(ROWi)(COLi)
+    int turn;
     char team;
     char unit;
+    int stun;
+    char dir;
     char row;
     char col;
     string result="";
 
+    file >> turn;
+    if(file.eof() || file.fail() || turn < 1)  return NULL;
+    result=result+(char)turn;
     file >> team;
     while(!file.eof()){
-        if(!isInputValid(team, "12\0") || file.eof())           return NULL;
+        if(!isInputValid(team, "BP\0") || file.eof())           return NULL;
         file >> unit;
-        if(!isInputValid(unit, "kasbhtp\0") || file.eof())      return NULL;
+        if(!isInputValid(unit, "KASBHTP\0") || file.eof())      return NULL;
+        file >> stun;
+        if(file.eof() || file.fail() || stun < -1)  return NULL;
+        file >> dir;
+        if(!isInputValid(dir, "UDLR\0") || file.eof())     return NULL;
         file >> row;
-        if(!isInputValid(row, "012345678\0") || file.eof())     return NULL;
+        if(!isInputValid(row, "ABCDEFGHI\0") || file.eof())     return NULL;
         file >> col;
         if(!isInputValid(col, "012345678\0"))     return NULL;
-        result=result + team + unit + row + col;
+        result = result + team + unit + (char)stun + dir + row + col;
         file >> team;
     }
-    return (char*)result.c_str();
+    return (char*)result.c_str();   // string -> char*
 }
 
 bool isInputValid(char input, const char* restrain){

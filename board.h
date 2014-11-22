@@ -16,6 +16,7 @@ public:
 	void startGame();
 private: 
 	void initGame();
+    void initGame(char*);
 	void showBoard();
 	void showBeam();
 	void selectUnit(int&, int&);	// input unit from user
