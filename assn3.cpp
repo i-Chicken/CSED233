@@ -8,8 +8,6 @@
 
 using namespace std;
 
-extern void InputPosition(int&, int&);
-
 char InputSelection(string);
 bool gameSave(fstream, Board*);
 bool isValidFile(fstream);
@@ -61,7 +59,7 @@ int main(){
 		InputSelection("10\0");
 		delete s;
 		delete b;	// delete Status, Board
-	}while(input != 0);
+	}while(input != '0');
 	return 0;
 }
 
@@ -69,8 +67,7 @@ char* readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UNITi)(stu
     int turn;
     char team;
     char unit;
-    int stun;
-    char dir;
+    int stun; char dir;
     char row;
     char col;
     string result="";

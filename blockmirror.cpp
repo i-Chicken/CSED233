@@ -23,3 +23,21 @@ void BlockMirror::setRotation(Direction d){
 		break;
 	}
 }
+
+int BlockMirror::beamUnit(Direction& d, UnitType u, int round){
+	if(direction == RIGHT && d == LEFT)	d=DNULL;
+	else if(direction == UP && d == DOWN)	d=DNULL;
+	else if(direction == LEFT && d == RIGHT)	d=DNULL;
+	else if(direction == DOWN && d == UP)	d=DNULL;	// beam blocking
+	else if(u==ATTACK){
+		removeUnit();
+		cout << "[System] BlockMirror at (" << (char)('A'+row) << " " << col+1 << ") is Destroyed" << endl;
+		d=DNULL;
+	}	//block destroy
+	else{
+		cout << "[System] Player " << (team == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
+		stunUnit(round);
+		d=DNULL;
+	}
+	return 0;
+}

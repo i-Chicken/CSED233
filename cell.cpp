@@ -17,32 +17,11 @@ Cell::~Cell(){
 ////////////////////////// Cell Deconstructor
 
 Team Cell::getUnitTeam(){
-	switch(getUnitType()){
-	case UNULL:
-		return TNULL;
-	default:
-		return unit->getTeam();
-	}	
+	if(unit == NULL)	return TNULL;
+	return unit->getTeam();
 }
 Direction Cell::getUnitDir(){
-	switch(getUnitType()){
-	case KING:		return DNULL;
-	case ATTACK:
-	case STUN:
-		return ((Laser*)unit)->getDirection();
-	case BLOCK:
-	case TRI:
-	case SPLIT:
-	case HYPER:
-		return ((Mirror*)unit)->getDirection();
-	}	
 	return DNULL;
-}
-
-UnitType Cell::getUnitType(){
-	if(unit == NULL)
-		return UNULL;
-	return unit->getUnitType();
 }
 //////////////////////////// getMethod
 
@@ -62,26 +41,7 @@ void Cell::setCell(Unit* o, bool a){
 
 
 void Cell::setUnitDir(Direction d){
-	switch(getUnitType()){
-	case ATTACK:
-        ((AttackLaser*)unit)->setRotation();
-        break;
-	case STUN:
-		((StunLaser*)unit)->setRotation();
-		break;
-	case BLOCK:
-		((BlockMirror*)unit)->setRotation(d);
-		break;
-	case TRI:
-		((TriMirror*)unit)->setRotation(d);
-		break;
-	case SPLIT:
-		((SplitMirror*)unit)->setRotation(d);
-		break;
-	case HYPER:
-		((HyperMirror*)unit)->setRotation();
-		break;
-	}
+	unit->rotateUnit(d);
 }
 
 
@@ -120,38 +80,10 @@ bool Cell::isUnitStun(int r){    return unit->isStun(r); }
 
 int Cell::beamCurCell(Direction& d, UnitType u, int round){
 	Direction temp=d;
+	if(unit != NULL)
+		return	unit->beamUnit(d,u,round);
+
 	switch(getUnitType()){
-	case KING:
-		d=DNULL;
-		if(u==ATTACK){
-			cout << "[System] King of Player " << (getUnitTeam() == PURPLE ? 1:2) << "is defeated" << endl;
-			return ((getUnitTeam()) == PURPLE ? 1:2);	// game over
-		}
-		else{
-			cout << "[System] Player " << (getUnitTeam() == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
-			unit->stunUnit(round);	
-			return 0;
-		}
-	case ATTACK:
-	case STUN:
-		d=DNULL;
-		return 0;
-	case BLOCK:
-		if(getUnitDir() == RIGHT && d == LEFT)	d=DNULL;
-		else if(getUnitDir() == UP && d == DOWN)	d=DNULL;
-		else if(getUnitDir() == LEFT && d == RIGHT)	d=DNULL;
-		else if(getUnitDir() == DOWN && d == UP)	d=DNULL;	// beam blocking
-		else if(u==ATTACK){
-			removeUnit();
-			cout << "[System] BlockMirror at (" << (char)('A'+row) << " " << col+1 << ") is Destroyed" << endl;
-			d=DNULL;
-		}	//block destroy
-		else{
-			cout << "[System] Player " << (getUnitTeam() == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
-			unit->stunUnit(round);	
-			d=DNULL;
-		}	// block stun
-		return 0;
 	case TRI:
 		switch(d){
 		case LEFT:

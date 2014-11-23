@@ -7,6 +7,7 @@
 class BlockMirror: public Mirror{
 public:
 	BlockMirror(Direction, Team, int, int);
+	int beamUnit(Direction&, UnitType, int);
 	void setRotation(Direction d);
 };
 
