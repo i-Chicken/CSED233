@@ -26,15 +26,18 @@ private:
 	Unit* getUnitAt(Point);
 	bool commandUnit(Point, int);	// unit moves or rotate
 	int launchLaser(UnitType, Direction, Point);
-	char* readFile(ifstream&);
+	string readFile(ifstream&);
+	bool teleUnit(Unit*);
 	bool gameSave();
+	void setCell();
 	int rows, cols;
     int round;
 	Team ongoingTeam;
 	Cell*** chessboard;
+	Point hypercell;
 	StatusBoard* statusboard;
 	Unit** units;
 	int unit_len;
-	char* savedata;
+	const char* savedata;
 };
 #endif

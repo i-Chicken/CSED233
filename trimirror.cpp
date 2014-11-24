@@ -47,8 +47,8 @@ int TriMirror::beamUnit(Direction& d, UnitType u, int round){
 	}	// beam reflection
 	if (temp == d){	// temp == original direction
 		if (u == ATTACK){
-			delete this;
 			cout << "[System] TriMirror (" << (char)('A' + point.getX()) << " " << point.getY() + 1 << ") is Destroyed" << endl;
+			setPos(Point(-1, -1));
 			return 1;
 		}	// tri destroy
 		else{

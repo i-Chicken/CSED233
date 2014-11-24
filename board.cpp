@@ -1,4 +1,6 @@
 #include "board.h"
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
@@ -27,7 +29,7 @@ bool isInputValid(char input, const char* restrain){
 	return false;
 }
 
-Point InputPosition(){	//using Reference Type
+Point InputPosition(){
 	int r, c;
 	do{
 		char rt;
@@ -64,7 +66,7 @@ Board::Board(StatusBoard* s){
 	savedata = NULL;
 }		//Constructor
 
-char* Board::readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UNITi)(stuni)(DIRi)(ROWi)(COLi)
+string Board::readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UNITi)(stuni)(DIRi)(ROWi)(COLi)
     int turn;
     char team;
     char unit;
@@ -79,7 +81,7 @@ char* Board::readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UNI
     result=result+(char)turn;
 
     file >> team;
-    while(!file.eof()){
+	while (file.eof() == false){
         if(!isInputValid(team, "BP\0") || file.eof())           return NULL;
         file >> unit;
         if(!isInputValid(unit, "KASBHTP\0") || file.eof())      return NULL;
@@ -94,7 +96,7 @@ char* Board::readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UNI
         result = result + team + unit + (char)stun + dir + row + col;
 		file >> team;
     }
-    return (char*)result.c_str();   // string -> char*
+    return result;   // string -> char*
 }
 
 Board::Board(StatusBoard *s, ifstream& file){
@@ -111,10 +113,13 @@ Board::Board(StatusBoard *s, ifstream& file){
 		}
 	}
     cout << "[System] Loading Game..." << endl;
-    savedata=readFile(file);
-    if(savedata==NULL)
-        cout << "[System] Failure to Load Game!" << endl;
+	string save = readFile(file);
+	if (save == ""){
+		cout << "[System] Failure to Load Game!" << endl;
+		savedata = NULL;
+	}
     else{
+		savedata = save.c_str();
         for(int i=0; savedata[i] != 0; i++)
             cout << ((int)savedata[i]) << " ";
 		cout << endl;
@@ -124,7 +129,8 @@ Board::Board(StatusBoard *s, ifstream& file){
 
 Board::~Board(){
 	for (int i = unit_len - 1; i >= 0; i--)
-		delete units[i];
+		delete (units[i]);
+	delete units;
 	for (int i = rows - 1; i >= 0; i--){
 		for (int j = cols - 1; j >= 0; j--){
 			delete chessboard[i][j];
@@ -295,42 +301,97 @@ void Board::initGame(){
 		round = 1;
 		ongoingTeam = PURPLE;
 	}
+	hypercell = Point(4, 4);
 	cout << "[System] Complete Initializing" << endl;
 }
 
 bool Board::gameSave(){
-	ofstream file("Savefile");
+	ofstream file("Savefile", ios::trunc);
 	file << round;
 	for(int i=0; i<unit_len; i++)
-		file << *units[i];
+		file << units[i];
+	file.close();
+	return true;
+}
 
+void Board::setCell(){
+	Point temp;
+	for (int i = 0; i < rows; i++){
+		for (int j = 0; j < cols; j++){
+			chessboard[i][j]->setCell(NULL);
+		}
+	}
+	for (int i = 0; i < unit_len; i++){
+		temp = units[i]->getPos();
+		if (temp == hypercell)
+			teleUnit(getUnitAt(hypercell));
+	}
+	for (int i = 0; i < unit_len; i++){
+		temp=units[i]->getPos();
+		if (temp != Point(-1, -1))
+			chessboard[temp.getX()][temp.getY()]->setCell(units[i]);
+	}
+}
+
+bool Board::teleUnit(Unit* u){
+	int r, c;
+	srand((unsigned int)time(NULL));
+	do{
+		r = rand() % 9;
+		c = rand() % 9;
+		if ((r == 0 && c == 1) || (r == 1 && c == 0))	continue;
+		if ((r == 0 && c == 7) || (r == 1 && c == 8))	continue;
+		if ((r == 7 && c == 0) || (r == 8 && c == 1))	continue;
+		if ((r == 7 && c == 8) || (r == 8 && c == 7))	continue;
+		if (u->getPos() == Point(r, c))	continue;
+		if (getUnitAt(Point(r, c)) != NULL)	continue;
+	} while (0);
+	cout << 
+	u->setPos(Point(r, c));
 	return true;
 }
 void Board::showBoard(){	//see StatusBoard.printStatus
+	setCell();
 	statusboard->printStatus(chessboard);
 }
 
 void Board::showBeam(){		// see StatusBoard.printBeam
+	setCell();
 	statusboard->printBeam();
 }
 
 Point Board::selectUnit(){
-	Point result;
+	int r, c;
+	char input[256];
 
 	cout << "Player " << (ongoingTeam == PURPLE ? 1 : 2) << "'s turn!" << endl << "Which Unit do you want to control?" << endl;
+	cout << "(Input 'x' or \"exit\" if you want to save and quit" << endl;
 	do{
-		result = InputPosition();
-		if (chessboard[result.getX()][result.getY()]->getUnitTeam() != ongoingTeam){		// NOT ongoingTeam's Unit
+		cin.getline(input, 10);
+		cout << input << endl;
+		if (strcmp(input, "exit") == 0 || input[0] == 'x')	return Point(-1, -1);
+		(input[0] >= 'a') ? r = (int)(input[0] - 'a') : r = (int)(input[0] - 'A');		// make small alphabet
+		c = input[2] - '1';
+		if (cin.fail() || c < 0 || c >= MAX_RANGE || r >= MAX_RANGE || r < 0){
+			cout << "[System] Input Format of position is \"Row Col|\"." << endl;
+			cout << "        ex) D 4, e 2, or etc." << endl;
+			cin.clear();		// flag 0
+			cin.ignore(256, '\n');	//buffer fresh
+			continue;
+		}
+
+		if (chessboard[r][c]->getUnitTeam() != ongoingTeam){		// NOT ongoingTeam's Unit
 			cout << "[System] Cannot control object" << endl;
 			continue;
 		}
-		else if (chessboard[result.getX()][result.getY()]->isUnitStun(round)){
+		else if (chessboard[r][c]->isUnitStun(round)){
 			cout << "[System] Unit is Stunned. choose another unit" << endl;
 			continue;
 		}
 		break;
 	} while (1);
-	return result;
+
+	return Point(r, c);
 }
 
 int Board::selectAction(Point p){
@@ -450,10 +511,13 @@ void Board::startGame(){
 	Point pos;
 
 	initGame();
-	while (win == 0 || win == 1 << 1){
+	while (~(win & (1 << 2)) || ~(win & (1 << 3))){
 		showBoard();
 		pos = selectUnit();
-		cout << pos.getX() << pos.getY() << endl;
+		if (pos == Point(-1, -1)){
+			gameSave();
+			break;
+		}
 		int actionType = selectAction(pos);    //action select
 		bool validAction = commandUnit(pos, actionType);	// action perform
 		if (validAction == false){

@@ -48,8 +48,8 @@ int SplitMirror::beamUnit(Direction& d, UnitType u, int round){
 	if (temp == d){	// temp == original direction
 		d = DNULL;
 		if (u == ATTACK){
-			delete this;
-			cout << "[System] SplitMirror (" << (char)('A' + point.getX()) << " " << point.getY() +1 << ") is Destroyed" << endl;
+			cout << "[System] SplitMirror (" << (char)('A' + point.getX()) << " " << point.getY() + 1 << ") is Destroyed" << endl;
+			setPos(Point(-1, -1));
 			return 1;
 		}	// tri destroy
 		else{

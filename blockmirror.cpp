@@ -32,7 +32,7 @@ int BlockMirror::beamUnit(Direction& d, UnitType u, int round){
 	else if(direction == DOWN && d == UP)	d=DNULL;	// beam blocking
 	else if(u==ATTACK){
 		cout << "[System] BlockMirror at (" << (char)('A'+point.getX()) << " " << point.getY()+1 << ") is Destroyed" << endl;
-		moveUnit(Point(-1, -1), NULL);
+		setPos(Point(-1, -1));
 		d=DNULL;
 		return 1;
 	}	//block destroy

@@ -11,7 +11,6 @@ Cell::Cell(Point p){
 /// Cell Constructor
 
 Cell::~Cell(){
-	delete unit;
 }
 ////////////////////////// Cell Deconstructor
 
@@ -64,4 +63,104 @@ int Cell::beamCurCell(Direction& d, UnitType u, int round){
 			unit = NULL;
 	}
 	return result;
+}
+
+//ofstream& operator<<(ofstream& , char );
+
+
+ostream& operator<<(ostream& os, Unit* unit){
+	if (dynamic_cast<King *>(unit) != NULL)
+		os << ((unit->team == PURPLE) ? 'P' : 'B') << 'K' << unit->stun << 'U' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+	if (dynamic_cast<AttackLaser *>(unit) != NULL){
+		switch (unit->getDirection()){
+		case UP:
+			os << ((unit->team == PURPLE) ? 'P' : 'B') << 'A' << -1 << 'U' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			break;
+		case DOWN:
+			os << ((unit->team == PURPLE) ? 'P' : 'B') << 'A' << -1 << 'D' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			break;
+		case RIGHT:
+			os << ((unit->team == PURPLE) ? 'P' : 'B') << 'A' << -1 << 'R' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			break;
+		case LEFT:
+			os << ((unit->team == PURPLE) ? 'P' : 'B') << 'A' << -1 << 'L' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			break;
+		}
+	}
+	 if (dynamic_cast<StunLaser *>(unit) != NULL){
+		 switch (unit->getDirection()){
+		 case UP:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'S' << -1 << 'U' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case DOWN:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'S' << -1 << 'D' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case RIGHT:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'S' << -1 << 'R' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case LEFT:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'S' << -1 << 'L' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 }
+	 }
+	 if (dynamic_cast<BlockMirror *>(unit) != NULL){
+		 switch (unit->getDirection()){
+		 case UP:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'B' << unit->stun << 'U' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case DOWN:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'B' << unit->stun << 'D' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case RIGHT:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'B' << unit->stun << 'R' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case LEFT:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'B' << unit->stun << 'L' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 }
+	 }
+
+	 if (dynamic_cast<TriMirror *>(unit) != NULL){
+		 switch (unit->getDirection()){
+		 case UP:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'T' << unit->stun << 'U' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case DOWN:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'T' << unit->stun << 'D' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case RIGHT:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'T' << unit->stun << 'R' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case LEFT:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'T' << unit->stun << 'L' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 }
+	 }
+	 if (dynamic_cast<SplitMirror *>(unit) != NULL){
+		 switch (unit->getDirection()){
+		 case UP:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'P' << unit->stun << 'U' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case DOWN:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'P' << unit->stun << 'D' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case RIGHT:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'P' << unit->stun << 'R' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case LEFT:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'P' << unit->stun << 'L' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 }
+	 }
+	 if (dynamic_cast<HyperMirror *>(unit) != NULL){
+		 switch (unit->getDirection()){
+		 case UP:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'H' << -1 << 'U' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 case LEFT:
+			 os << ((unit->team == PURPLE) ? 'P' : 'B') << 'H' << -1 << 'L' << (char)('A' + (unit->getPos()).getX()) << (char)('1' + (unit->getPos()).getY());
+			 break;
+		 }
+	 }
+	return os;
 }

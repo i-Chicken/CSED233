@@ -41,10 +41,10 @@ int main(){
 		b->startGame();	//game start
 		cout << "What do you want to do?" << endl;
 		cout << "1. Restart Game		0. Exit Game" << endl;
-		InputSelection("10\0");
+		input=InputSelection("10\0");
+		delete b;
 		delete s;
-		delete b;	// delete Status, Board
+		// delete Status, Board
 	}while(input != '0');
 	return 0;
 }
-

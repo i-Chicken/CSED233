@@ -20,7 +20,8 @@ bool King::rotateUnit(Direction){
 int King::beamUnit(Direction& d, UnitType u, int round){
 	d=DNULL;
 	if(u == ATTACK){
-		cout << "[System] King of Player " << (team == PURPLE ? 1:2) << "is defeated" << endl;
+		cout << "[System] King of Player " << (team == PURPLE ? 1 : 2) << "is defeated" << endl;
+		setPos(Point(-1, -1));
 		return (team == PURPLE ? 1:2);
 	}
 	else{

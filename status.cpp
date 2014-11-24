@@ -375,6 +375,10 @@ void StatusBoard::setCell(Cell*** chessboard){
 			}
 		}
 	}
+	status[4 * 2][4 * 2] = '/';
+	status[4 * 2][4 * 2 + 1] = '\\';
+	status[4 * 2 + 1][4 * 2] = '\\';
+	status[4 * 2 + 1][4 * 2 + 1] = '/';
 };
 
 
