@@ -16,6 +16,7 @@ public:
 	virtual int beamUnit(Direction&, UnitType, int)=0;	// 0 - Nothing Happened, 1 - Unit Destroyed, 2 - PURPLE king down, 3 - BLUE king down
 	virtual bool rotateUnit(Direction) = 0;	// 0 - unable move, 1 - possible
 	bool isStun(int);
+	friend ofstream& operator<<(ofstream&, Unit*);
 protected:
 	Team team;
 	Point point;

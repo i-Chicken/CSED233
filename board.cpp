@@ -64,7 +64,40 @@ Board::Board(StatusBoard* s){
 	savedata = NULL;
 }		//Constructor
 
-Board::Board(StatusBoard *s, char* save){
+char* Board::readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UNITi)(stuni)(DIRi)(ROWi)(COLi)
+    int turn;
+    char team;
+    char unit;
+    int stun;
+	char dir;
+    char row;
+    char col;
+    string result="";
+
+	file >> turn;
+    if(file.eof() || file.fail() || turn < 1)  return NULL;
+    result=result+(char)turn;
+
+    file >> team;
+    while(!file.eof()){
+        if(!isInputValid(team, "BP\0") || file.eof())           return NULL;
+        file >> unit;
+        if(!isInputValid(unit, "KASBHTP\0") || file.eof())      return NULL;
+        file >> stun;
+        if(file.eof() || file.fail() || stun < -1)  return NULL;
+        file >> dir;
+        if(!isInputValid(dir, "UDLR\0") || file.eof())     return NULL;
+        file >> row;
+        if(!isInputValid(row, "ABCDEFGHI\0") || file.eof())     return NULL;
+        file >> col;
+        if(!isInputValid(col, "012345678\0"))     return NULL;
+        result = result + team + unit + (char)stun + dir + row + col;
+		file >> team;
+    }
+    return (char*)result.c_str();   // string -> char*
+}
+
+Board::Board(StatusBoard *s, ifstream& file){
 	statusboard = s;
 	rows = MAX_RANGE;
 	cols = MAX_RANGE;
@@ -77,8 +110,18 @@ Board::Board(StatusBoard *s, char* save){
 			chessboard[i][j] = new Cell(Point(i, j));	// one Cell for one destrict
 		}
 	}
-	savedata = save;
+    cout << "[System] Loading Game..." << endl;
+    savedata=readFile(file);
+    if(savedata==NULL)
+        cout << "[System] Failure to Load Game!" << endl;
+    else{
+        for(int i=0; savedata[i] != 0; i++)
+            cout << ((int)savedata[i]) << " ";
+		cout << endl;
+    }
+		// load game from file
 }
+
 Board::~Board(){
 	for (int i = unit_len - 1; i >= 0; i--)
 		delete units[i];
@@ -102,13 +145,17 @@ void Board::initGame(){
 	[1+6*i+5] -> col (int type)
 	*/
 
+	cout << "[System] Initializing Game.." << endl;
 	if (savedata != NULL){
-		cout << "[System] Initializing Game.." << endl;
 		int len;
-		for (len = 0; savedata[len] != 0; len++);
+		for (len = 0; len<20; len++){
+			cout << (int)savedata[len] << " " ;
+		}
+		cout << endl;
 		unit_len = (len - 1) / 6;
 		units = new Unit*[unit_len];
 
+		cout << unit_len << endl;
 		for (int i = 0; savedata[1 + 6 * i] != 0; i++){
 			char team = savedata[1 + 6 * i];
 			char type = savedata[1 + 6 * i + 1];
@@ -251,7 +298,14 @@ void Board::initGame(){
 	cout << "[System] Complete Initializing" << endl;
 }
 
+bool Board::gameSave(){
+	ofstream file("Savefile");
+	file << round;
+	for(int i=0; i<unit_len; i++)
+		file << *units[i];
 
+	return true;
+}
 void Board::showBoard(){	//see StatusBoard.printStatus
 	statusboard->printStatus(chessboard);
 }

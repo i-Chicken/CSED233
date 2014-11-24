@@ -33,3 +33,4 @@ int King::beamUnit(Direction& d, UnitType u, int round){
 Direction King::getDirection(){
 	return DNULL;
 }
+
