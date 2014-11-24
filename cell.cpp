@@ -1,13 +1,12 @@
 #include <iostream>
 #include "cell.h"
+#include <typeinfo>
 
 using namespace std;
 
-Cell::Cell(int r, int c){
-	row=r;
-	col=c;
+Cell::Cell(Point p){
+	point = p;
 	unit=NULL;
-	accessible=true;
 }
 /// Cell Constructor
 
@@ -21,147 +20,48 @@ Team Cell::getUnitTeam(){
 	return unit->getTeam();
 }
 Direction Cell::getUnitDir(){
-	return DNULL;
+	if (unit == NULL)	return DNULL;
+	return unit->getDirection();
+}
+UnitType Cell::getUnitType(){
+	if (unit == NULL)	return UNULL;
+	if (dynamic_cast<King *>(unit) != NULL)	return KING;
+	if (dynamic_cast<AttackLaser *>(unit) != NULL)	return ATTACK;
+	if (dynamic_cast<StunLaser *>(unit) != NULL)	return STUN;
+	if (dynamic_cast<BlockMirror *>(unit) != NULL)	return BLOCK;
+	if (dynamic_cast<TriMirror *>(unit) != NULL)	return TRI;
+	if (dynamic_cast<SplitMirror *>(unit) != NULL)	return SPLIT;
+	if (dynamic_cast<HyperMirror *>(unit) != NULL)	return HYPER;
+	return UNULL;
 }
 //////////////////////////// getMethod
 
-
 void Cell::removeUnit(){
-	delete unit;
 	unit=NULL;
-	accessible=true;
 }
-/////////////////////////////// remove
 
-void Cell::setCell(Unit* o, bool a){
-	accessible=a;
+bool Cell::moveTo(Point p, Unit* u){
+	if (unit == NULL)	return false;
+	unit->moveUnit(p, u);
+	return true;
+}
+void Cell::setCell(Unit* o){
 	unit=o;
 }
-////////////////////////////// setCell
-
 
 void Cell::setUnitDir(Direction d){
 	unit->rotateUnit(d);
-}
-
-
-bool Cell::movableFrom(UnitType u, int r, int c){
-	if( (row-r)*(row-r) > 1 || (col-c)*(col-c) > 1)	return false;
-	switch(u){
-	case HYPER:
-		if(accessible == false && unit != NULL)	return false;
-		if(getUnitType() == STUN || getUnitType() == ATTACK)	return false;
-		break;
-	default:
-		if(accessible == false)	return false;
-		break;
-	}
-	return true;
-}
-
-void Cell::moveTo(Cell* target){
-	if(getUnitType() == HYPER){
-		swapWith(target);
-		return;
-	}
-	target->setCell(unit, false);
-	unit=NULL;
-	accessible=true;
-}
-
-
-void Cell::swapWith(Cell* target){
-	Unit* temp=unit;
-	target->moveTo(this);	// Unit Moves : target -> this
-	target->setCell(temp, false);	// Unit Moves : this -> target
 }
 
 bool Cell::isUnitStun(int r){    return unit->isStun(r); }
 
 int Cell::beamCurCell(Direction& d, UnitType u, int round){
 	Direction temp=d;
-	if(unit != NULL)
-		return	unit->beamUnit(d,u,round);
-
-	switch(getUnitType()){
-	case TRI:
-		switch(d){
-		case LEFT:
-			if(getUnitDir() == DOWN)	d=DOWN;
-			else if(getUnitDir() == RIGHT)	d=UP;
-			break;
-		case DOWN:
-			if(getUnitDir() == RIGHT)	d=RIGHT;
-			else if(getUnitDir() == UP)		d=LEFT;
-			break;
-		case RIGHT:
-			if(getUnitDir() == UP)		d=UP;
-			else if(getUnitDir() == LEFT)		d=DOWN;
-			break;
-		case UP:
-			if(getUnitDir() == LEFT)		d=LEFT;
-			else if(getUnitDir() == DOWN)		d=RIGHT;
-			break;
-		}	// beam reflection
-		if(temp == d){	// temp == original direction
-			if(u == ATTACK){
-				removeUnit();
-				cout << "[System] TriMirror (" << (char)('A'+row) << " " << col+1 << ") is Destroyed" << endl;
-			}	// tri destroy
-			else{
-				unit->stunUnit(round);
-				cout << "[System] Player " << (getUnitTeam() == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
-			}	// tri stun
-            d=DNULL;
-		}
-		return 0;
-	case SPLIT:
-		switch(d){
-		case LEFT:
-			if(getUnitDir() == DOWN)	d=DOWN;
-			else if(getUnitDir() == RIGHT)	d=UP;
-			break;
-		case DOWN:
-			if(getUnitDir() == RIGHT)	d=RIGHT;
-			else if(getUnitDir() == UP)		d=LEFT;
-			break;
-		case RIGHT:
-			if(getUnitDir() == UP)		d=UP;
-			else if(getUnitDir() == LEFT)		d=DOWN;
-			break;
-		case UP:
-			if(getUnitDir() == LEFT)		d=LEFT;
-			else if(getUnitDir() == DOWN)		d=RIGHT;
-			break;
-		}	// beam reflection
-		if(temp == d){	// temp == original direction
-			if(u == ATTACK){
-				removeUnit();
-				cout << "[System] SplitMirror (" << (char)('A'+row) << " " << col+1 << ") is Destroyed" << endl;
-			}	// tri destroy
-			else{
-				unit->stunUnit(round);
-				cout << "[System] Player " << (getUnitTeam() == PURPLE ? 1:2) << "'s Unit at (" << (char)('A'+row) << " " << col+1 << ") is in stun." << endl;
-			}	// tri stun
-			d=DNULL;
-		}
-		return 0;
-	case HYPER:
-		switch(d){
-		case LEFT:
-			getUnitDir() == UP ? d=DOWN : d=UP;
-			break;
-		case DOWN:
-			getUnitDir() == UP ? d=LEFT : d=RIGHT;
-			break;
-		case RIGHT:
-			getUnitDir() == UP ? d=UP : d=DOWN;
-			break;
-		case UP:
-			getUnitDir() == UP ? d=RIGHT : d=LEFT;
-			break;
-		}	// beam reflection
-		return 0;
-    }
-    return 0;
+	int result=0;
+	if (unit != NULL){
+		result = unit->beamUnit(d, u, round);
+		if (result != 0)
+			unit = NULL;
+	}
+	return result;
 }

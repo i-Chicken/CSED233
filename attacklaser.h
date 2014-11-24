@@ -6,8 +6,8 @@
 
 class AttackLaser : public Laser{
 public:
-	AttackLaser(Direction, Team, int, int);
-	void setRotation();
+	AttackLaser(Team, Point, Direction);
+	bool rotateUnit(Direction);
 };
 
 #endif

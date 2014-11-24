@@ -5,8 +5,8 @@
 
 class StunLaser : public Laser{
 public:
-	StunLaser(Direction, Team, int, int);
-	void setRotation();
+	StunLaser(Team, Point, Direction);
+	bool rotateUnit(Direction);
 };
 
 

@@ -6,8 +6,11 @@
 
 class HyperMirror:public Mirror{
 public:
-	HyperMirror(Direction, Team, int, int);	//UP, LEFT
-	void setRotation();
+	HyperMirror(Team, Point, Direction);	//UP, LEFT
+	bool rotateUnit(Direction);
+	int beamUnit(Direction&, UnitType, int);
+	bool moveUnit(Point, Unit*);
 };
 
 #endif
+

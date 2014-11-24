@@ -8,10 +8,10 @@
 
 using namespace std;
 
-char InputSelection(string);
+extern char InputSelection(string);
+extern bool isInputValid(char , const char*);	// Input validity function
+extern bool isValidFile(fstream);	
 bool gameSave(fstream, Board*);
-bool isValidFile(fstream);
-bool isInputValid(char input, const char* restrain);
 char* readFile(ifstream&);
 
 int main(){
@@ -22,8 +22,8 @@ int main(){
 	cout << "<< Welcome to Laser Chess!! >>" << endl << endl;
 	do{
 	    cout << "What do you want to do?" << endl;
-        ifstream savefile("Savefile");
-        if(savefile != NULL){
+        ifstream savefile("Savefile.txt");		// same directory with .exe
+        if(!savefile.is_open()){
             cout << "1. New Game\t\t2. Load Game\t\t0. Exit Game" << endl;
             input=InputSelection("120\0");
         }
@@ -46,16 +46,15 @@ int main(){
             else{
                 for(int i=0; savedata[i] != 0; i++)
                     cout << ((int)savedata[i]) << " ";
-                cout << "asdflaksjdflkjasf" << endl;
                 s = new StatusBoard();
                 b = new Board(s, savedata);
             }
             savefile.close();
         }   ////////////////// Load Game from file
-        else if(input == 0) break;
+        else if(input == '0') break;
 		b->startGame();	//game start
 		cout << "What do you want to do?" << endl;
-		cout << "1. Restart Game		2. Exit Game" << endl;
+		cout << "1. Restart Game		0. Exit Game" << endl;
 		InputSelection("10\0");
 		delete s;
 		delete b;	// delete Status, Board
@@ -72,9 +71,10 @@ char* readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UNITi)(stu
     char col;
     string result="";
 
-    file >> turn;
+	file >> turn;
     if(file.eof() || file.fail() || turn < 1)  return NULL;
     result=result+(char)turn;
+
     file >> team;
     while(!file.eof()){
         if(!isInputValid(team, "BP\0") || file.eof())           return NULL;
@@ -92,29 +92,4 @@ char* readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UNITi)(stu
         file >> team;
     }
     return (char*)result.c_str();   // string -> char*
-}
-
-bool isInputValid(char input, const char* restrain){
-    for(int i=0; restrain[i] != '\0'; i++){
-        if(restrain[i] == input) return true;
-    }
-    return false;
-}
-
-char InputSelection(string restrain){
-    char result;
-	char* str=(char*)restrain.c_str(); 
-    do{
-        cin >> result;
-        cin.clear();
-        cin.ignore(256, '\n');
-        if(!isInputValid(result, str)){
-            cout << "[System] Input Format of command is ";
-            for(int i=0; str[i] != '\0'; i++)
-                cout << str[i] << " ";
-            cout << endl;
-        }
-        else        return result;
-    }while(1);
-    return 0;
 }

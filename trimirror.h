@@ -6,8 +6,10 @@
 
 class TriMirror: public Mirror{
 public:
-	TriMirror(Direction, Team, int, int);
-	void setRotation(Direction d);
+	TriMirror(Team, Point, int, Direction);
+	bool rotateUnit(Direction);
+	int beamUnit(Direction&, UnitType, int);
+	bool moveUnit(Point, Unit*);
 };
 
 #endif

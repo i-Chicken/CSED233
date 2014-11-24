@@ -1,24 +1,26 @@
 #ifndef UNIT_H
 #define UNIT_H
 
-enum Direction { UP, DOWN, RIGHT, LEFT, DNULL };
-enum Team { BLUE, PURPLE, TNULL };
-enum UnitType { KING, ATTACK, STUN, BLOCK, TRI, SPLIT, HYPER, UNULL };
+#include <iostream>
+#include "global.h"
+
+using namespace std;
 
 class Unit{
 public:
-	Unit(Team, int, int, int);	// team, stun, row, col
+	Unit(Team, Point, int);	// team, row, col, stun
 	Team getTeam();
-	virtual int moveUnit(int, int)=0;	// 0 - unable move, 1 - possible, 2- stunning
-	virtual bool rotateUnit(Direction)=0;	// 0 - unable move, 1 - possible
-	virtual int beamUnit(Direction, UnitType, int)=0;	// 1 - PURPLE king down, 2 - BLUE king down
+	Point getPos();
+	virtual	Direction getDirection()=0;		// get Direction
+	virtual bool moveUnit(Point, Unit*)=0;	// 0 - unable move, 1 - possible
+	virtual int beamUnit(Direction&, UnitType, int)=0;	// 0 - Nothing Happened, 1 - Unit Destroyed, 2 - PURPLE king down, 3 - BLUE king down
+	virtual bool rotateUnit(Direction) = 0;	// 0 - unable move, 1 - possible
 	bool isStun(int);
 protected:
 	Team team;
-	int row;
-	int col;
+	Point point;
 	int stun;
-	void stunUnit(int);     // Unit stunned by laser
+	void stunUnit(int);     // Unit stunned by laser(private method)
 };
 
 #endif

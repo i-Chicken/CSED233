@@ -1,7 +1,7 @@
 #include "mirror.h"
 
 
-Mirror::Mirror(Direction d, UnitType u, Team t, int r, int c): Unit(u, t, r, c){
+Mirror::Mirror(Team t, Point p, int s, Direction d): Unit(t, p, s){
 	direction = d;
 }
 

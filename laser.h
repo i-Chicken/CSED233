@@ -5,11 +5,11 @@
 
 class Laser: public Unit{
 public:
+	Laser(Team, Point, Direction);
 	Direction getDirection();
-	bool moveUnit(int, int);
-	bool rotateUnit(Direction)=0;
+	bool moveUnit(Point, Unit*);
 	int beamUnit(Direction&, UnitType, int);
-	Laser(Direction, UnitType, Team, int, int);
+	virtual bool rotateUnit(Direction) = 0;
 protected:
 	Direction direction;
 };

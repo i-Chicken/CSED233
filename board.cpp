@@ -1,76 +1,89 @@
-
-#include<iostream>
 #include "board.h"
 
 using namespace std;
 
-
-void InputSelection(int& num){	//using Reference Type
+char InputSelection(string restrain){
+	char result;
+	char* str = (char*)restrain.c_str();
 	do{
-		cin >> num;
-		if(cin.fail() || (num != 1 && num != 2)){
-			cin.clear();		//flag 0
-			cin.ignore(256, '\n');	// buffer fresh
-			cout << "[System] Input Format of command is 1 or 2"<<endl;
-			continue;
+		cin >> result;
+		cin.clear();
+		cin.ignore(256, '\n');
+		if (!isInputValid(result, str)){
+			cout << "[System] Input Format of command is ";
+			for (int i = 0; str[i] != '\0'; i++)
+				cout << str[i] << " ";
+			cout << endl;
 		}
-		break;
-	}while(1);
+		else        return result;
+	} while (1);
+	return 0;
 }
 
-void InputPosition(int& r, int& c){	//using Reference Type
+bool isInputValid(char input, const char* restrain){
+	for (int i = 0; restrain[i] != '\0'; i++){
+		if (restrain[i] == input) return true;
+	}
+	return false;
+}
+
+Point InputPosition(){	//using Reference Type
+	int r, c;
 	do{
 		char rt;
 		int ct;
 		cin >> rt >> ct;
-		rt>='a'?r=(int)(rt-'a') : r=(int)(rt-'A');		// make small alphabet
-        c=ct-1;
-		if(cin.fail() || c<0 || c>=MAX_RANGE || r>=MAX_RANGE || r<0){
-			cout << "[System] Input Format of position is \"Row Col|\"."<<endl;
+		rt >= 'a' ? r = (int)(rt - 'a') : r = (int)(rt - 'A');		// make small alphabet
+		c = ct - 1;
+		if (cin.fail() || c < 0 || c >= MAX_RANGE || r >= MAX_RANGE || r < 0){
+			cout << "[System] Input Format of position is \"Row Col|\"." << endl;
 			cout << "        ex) D 4, e 2, or etc." << endl;
 			cin.clear();		// flag 0
 			cin.ignore(256, '\n');	//buffer fresh
 			continue;
 		}
 		break;
-	}while(1);
+	} while (1);
+	return Point(r, c);
 }
 
 
 Board::Board(StatusBoard* s){
-	statusboard=s;
-	rows=MAX_RANGE;
-	cols=MAX_RANGE;
+	statusboard = s;
+	rows = MAX_RANGE;
+	cols = MAX_RANGE;
 	chessboard = new Cell**[rows];
-	for(int i=0; i<rows; i++){
+	for (int i = 0; i < rows; i++){
 		chessboard[i] = new Cell*[cols];
 	}
-	for(int i=0; i<rows; i++){
-		for(int j=0; j<cols; j++){
-			chessboard[i][j] = new Cell(i, j);	// one Cell for one destrict
+	for (int i = 0; i < rows; i++){
+		for (int j = 0; j < cols; j++){
+			chessboard[i][j] = new Cell(Point(i, j));	// one Cell for one destrict
 		}
 	}
-    initGame();
+	savedata = NULL;
 }		//Constructor
 
-Board::Board(StatusBoard *s, char* savedata){
-	statusboard=s;
-	rows=MAX_RANGE;
-	cols=MAX_RANGE;
+Board::Board(StatusBoard *s, char* save){
+	statusboard = s;
+	rows = MAX_RANGE;
+	cols = MAX_RANGE;
 	chessboard = new Cell**[rows];
-	for(int i=0; i<rows; i++){
+	for (int i = 0; i < rows; i++){
 		chessboard[i] = new Cell*[cols];
 	}
-	for(int i=0; i<rows; i++){
-		for(int j=0; j<cols; j++){
-			chessboard[i][j] = new Cell(i, j);	// one Cell for one destrict
+	for (int i = 0; i < rows; i++){
+		for (int j = 0; j < cols; j++){
+			chessboard[i][j] = new Cell(Point(i, j));	// one Cell for one destrict
 		}
 	}
-    initGame(savedata); 
+	savedata = save;
 }
 Board::~Board(){
-	for(int i=rows-1; i>=0; i--){
-		for(int j=cols-1; j>=0; j--){
+	for (int i = unit_len - 1; i >= 0; i--)
+		delete units[i];
+	for (int i = rows - 1; i >= 0; i--){
+		for (int j = cols - 1; j >= 0; j--){
 			delete chessboard[i][j];
 		}
 		delete[] chessboard[i];
@@ -78,79 +91,165 @@ Board::~Board(){
 	delete[] chessboard;
 }		//Destructor 
 
-void Board::initGame(char* savedata){
-    /* save data index
-    [0] -> stageTurn
-    [1+6*i] -> unitTeam
-    [1+6*i+1] -> UnitType
-    [1+6*i+2] -> stun
-    [1+6*i+3] -> direction
-    [1+6*i+4] -> row
-    [1+6*i+5] -> col
-       */
-    cout << "[System] Initializing Game.." << endl;
+void Board::initGame(){
+	/* save data index BK-1UA1
+	[0] -> stageTurn (int type)
+	[1+6*i] -> unitTeam ('B' 'K')
+	[1+6*i+1] -> UnitType (char type)
+	[1+6*i+2] -> stun (int type)
+	[1+6*i+3] -> direction (char type)
+	[1+6*i+4] -> row (char type)
+	[1+6*i+5] -> col (int type)
+	*/
 
-    for(int i=0; savedata[1+6*i] != 0; i++){
-    
-        switch(savedata[1+6*i+1]){
-        case 'K':
-            //chessboard[savedata[1+4*i+2]-'0'][savedata[1+4*i+3]-'0']->setCell(new King(
-            break;
-        case 'A':
-            break;
-        case 'S':
-            break;
-        case 'B':
-            break;
-        case 'H':
-            break;
-        case 'T':
-            break;
-        case 'P':
-            break;
-        }
-    }
-    cout << "[System] Complete Initializing" << endl;
-}
-void Board::initGame(){	//setting board
-    cout << "[System] Initializing Game.." << endl;
-	chessboard[0][0]->setCell(new AttackLaser(DOWN, PURPLE, 0, 0), false);
-	chessboard[0][1]->setCell(NULL, false);	// Laser surround
-	chessboard[1][0]->setCell(NULL, false);	// Laser surround
-	chessboard[0][4]->setCell(new BlockMirror(DOWN, PURPLE, 0, 4), false);
-	chessboard[0][5]->setCell(new King(PURPLE, 0, 5), false);
-	chessboard[0][6]->setCell(new BlockMirror(DOWN, PURPLE, 0, 6), false);
-	chessboard[0][8]->setCell(new StunLaser(DOWN, PURPLE, 0, 8), false);
-    chessboard[1][8]->setCell(NULL, false); // Laser surround
-    chessboard[0][7]->setCell(NULL, false); // Laser surround
-	chessboard[1][7]->setCell(new SplitMirror(DOWN, PURPLE, 1, 7), false);
-	chessboard[3][0]->setCell(new TriMirror(RIGHT, PURPLE, 3, 0), false);
-	chessboard[3][2]->setCell(new TriMirror(LEFT, BLUE, 3, 2), false);
-	chessboard[3][4]->setCell(new HyperMirror(UP, PURPLE, 3, 4), false);
-	chessboard[3][5]->setCell(new HyperMirror(UP, PURPLE, 3, 5), false);
-	chessboard[3][6]->setCell(new TriMirror(DOWN, PURPLE, 3, 6), false);
-	chessboard[3][8]->setCell(new TriMirror(UP, BLUE, 3, 8), false);
-	chessboard[5][0]->setCell(new TriMirror(DOWN, PURPLE, 5, 0), false);
-	chessboard[5][2]->setCell(new TriMirror(UP, BLUE, 5, 2), false);
-	chessboard[5][3]->setCell(new HyperMirror(UP, BLUE, 5, 3), false);
-	chessboard[5][4]->setCell(new HyperMirror(UP, BLUE, 5, 4), false);
-	chessboard[5][6]->setCell(new TriMirror(RIGHT, PURPLE, 5, 6), false);
-	chessboard[5][8]->setCell(new TriMirror(LEFT, BLUE, 5, 8), false);
-	chessboard[7][1]->setCell(new SplitMirror(UP, BLUE, 7, 1), false);
-	chessboard[8][0]->setCell(new StunLaser(UP, BLUE, 8, 0), false);
-    chessboard[7][0]->setCell(NULL, false); // Laser surround
-    chessboard[8][1]->setCell(NULL, false); // Laser surround
-	chessboard[8][2]->setCell(new BlockMirror(UP, BLUE, 8, 2), false);
-	chessboard[8][3]->setCell(new King(BLUE, 8, 3), false);
-	chessboard[8][4]->setCell(new BlockMirror(UP, BLUE, 8, 4), false);
-	chessboard[8][8]->setCell(new AttackLaser(UP, BLUE, 8, 8), false);
-	chessboard[7][8]->setCell(NULL, false);	// Laser surround
-	chessboard[8][7]->setCell(NULL, false);	// Laser surround
-    round=1;
-    ongoingTeam=PURPLE;
-    cout << "[System] Complete Initializing" << endl;
-}
+	if (savedata != NULL){
+		cout << "[System] Initializing Game.." << endl;
+		int len;
+		for (len = 0; savedata[len] != 0; len++);
+		unit_len = (len - 1) / 6;
+		units = new Unit*[unit_len];
 
+		for (int i = 0; savedata[1 + 6 * i] != 0; i++){
+			char team = savedata[1 + 6 * i];
+			char type = savedata[1 + 6 * i + 1];
+			int stun = savedata[1 + 6 * i + 2];
+			char dir = savedata[1 + 6 * i + 3];
+			int row = savedata[1 + 6 * i + 4] - 'A';
+			int col = savedata[1 + 6 * i + 5] - '1';
+
+			switch (type){
+			case 'K':
+				units[i] = new King(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun);	break;
+			case 'A':
+				switch (dir){
+				case 'U':
+					units[i] = new AttackLaser(((team == 'P') ? PURPLE : BLUE), Point(row, col), UP);	break;
+				case 'D':
+					units[i] = new AttackLaser(((team == 'P') ? PURPLE : BLUE), Point(row, col), DOWN);		break;
+				case 'R':
+					units[i] = new AttackLaser(((team == 'P') ? PURPLE : BLUE), Point(row, col), RIGHT);	break;
+				case 'L':
+					units[i] = new AttackLaser(((team == 'P') ? PURPLE : BLUE), Point(row, col), LEFT);		break;
+				}
+				break;
+			case 'S':
+				switch (dir){
+				case 'U':
+					units[i] = new StunLaser(((team == 'P') ? PURPLE : BLUE), Point(row, col), UP);			break;
+				case 'D':
+					units[i] = new StunLaser(((team == 'P') ? PURPLE : BLUE), Point(row, col), DOWN);			break;
+				case 'R':
+					units[i] = new StunLaser(((team == 'P') ? PURPLE : BLUE), Point(row, col), RIGHT);			break;
+				case 'L':
+					units[i] = new StunLaser(((team == 'P') ? PURPLE : BLUE), Point(row, col), LEFT);			break;
+				}
+				break;
+			case 'B':
+				switch (dir){
+				case 'U':
+					units[i] = new BlockMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun, UP);			break;
+				case 'D':
+					units[i] = new BlockMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun, DOWN);			break;
+				case 'R':
+					units[i] = new BlockMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun, RIGHT);			break;
+				case 'L':
+					units[i] = new BlockMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun, LEFT);			break;
+				}
+				break;
+			case 'H':
+				switch (dir){
+				case 'U':
+					units[i] = new HyperMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), UP);			break;
+				case 'L':
+					units[i] = new HyperMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), LEFT);			break;
+				}
+				break;
+			case 'T':
+				switch (dir){
+				case 'U':
+					units[i] = new TriMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun, UP);			break;
+				case 'D':
+					units[i] = new TriMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun, DOWN);			break;
+				case 'R':
+					units[i] = new TriMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun, RIGHT);			break;
+				case 'L':
+					units[i] = new TriMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun, LEFT);			break;
+				}
+				break;
+			case 'P':
+				switch (dir){
+				case 'U':
+					units[i] = new SplitMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun, UP);			break;
+				case 'D':
+					units[i] = new SplitMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun, DOWN);			break;
+				case 'R':
+					units[i] = new SplitMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun, RIGHT);			break;
+				case 'L':
+					units[i] = new SplitMirror(((team == 'P') ? PURPLE : BLUE), Point(row, col), stun, LEFT);			break;
+				}
+				break;
+			}
+			chessboard[row][col]->setCell(units[i]);
+		}
+		round = savedata[0];
+		ongoingTeam = ((round % 2 == 1) ? PURPLE : BLUE);
+	}
+	else{
+		units = new Unit*[24];
+		unit_len = 24;
+		units[0] = new AttackLaser(PURPLE, Point(0, 0), DOWN);
+		chessboard[0][0]->setCell(units[0]);
+		units[1] = new BlockMirror(PURPLE, Point(0, 4), -1, DOWN);
+		chessboard[0][4]->setCell(units[1]);
+		units[2] = new King(PURPLE, Point(0, 5), -1);
+		chessboard[0][5]->setCell(units[2]);
+		units[3] = new BlockMirror(PURPLE, Point(0, 6), -1, DOWN);
+		chessboard[0][6]->setCell(units[3]);
+		units[4] = new StunLaser(PURPLE, Point(0, 8), DOWN);
+		chessboard[0][8]->setCell(units[4]);
+		units[5] = new SplitMirror(PURPLE, Point(1, 7), -1, DOWN);
+		chessboard[1][7]->setCell(units[5]);
+		units[6] = new TriMirror(PURPLE, Point(3, 0), -1, RIGHT);
+		chessboard[3][0]->setCell(units[6]);
+		units[7] = new TriMirror(PURPLE, Point(3, 2), -1, LEFT);
+		chessboard[3][2]->setCell(units[7]);
+		units[8] = new HyperMirror(PURPLE, Point(3, 4), UP);
+		chessboard[3][4]->setCell(units[8]);
+		units[9] = new HyperMirror(PURPLE, Point(3, 5), UP);
+		chessboard[3][5]->setCell(units[9]);
+		units[10] = new TriMirror(PURPLE, Point(3, 6), -1, DOWN);
+		chessboard[3][6]->setCell(units[10]);
+		units[11] = new TriMirror(BLUE, Point(3, 8), -1, UP);
+		chessboard[3][8]->setCell(units[11]);
+		units[12] = new TriMirror(PURPLE, Point(5, 0), -1, DOWN);
+		chessboard[5][0]->setCell(units[12]);
+		units[13] = new TriMirror(BLUE, Point(5, 2), -1, UP);
+		chessboard[5][2]->setCell(units[13]);
+		units[14] = new HyperMirror(BLUE, Point(5, 3), UP);
+		chessboard[5][3]->setCell(units[14]);
+		units[15] = new HyperMirror(BLUE, Point(5, 4), UP);
+		chessboard[5][4]->setCell(units[15]);
+		units[16] = new TriMirror(PURPLE, Point(5, 6), -1, RIGHT);
+		chessboard[5][6]->setCell(units[16]);
+		units[17] = new TriMirror(BLUE, Point(5, 8), -1, LEFT);
+		chessboard[5][8]->setCell(units[17]);
+		units[18] = new TriMirror(BLUE, Point(7, 1), -1, UP);
+		chessboard[7][1]->setCell(units[18]);
+		units[19] = new StunLaser(BLUE, Point(8, 0), UP);
+		chessboard[8][0]->setCell(units[19]);
+		units[20] = new BlockMirror(BLUE, Point(8, 2), -1, UP);
+		chessboard[8][2]->setCell(units[20]);
+		units[21] = new King(BLUE, Point(8, 3), -1);
+		chessboard[8][3]->setCell(units[21]);
+		units[22] = new TriMirror(BLUE, Point(8, 4), -1, UP);
+		chessboard[8][4]->setCell(units[22]);
+		units[23] = new AttackLaser(BLUE, Point(8, 8), UP);
+		chessboard[8][8]->setCell(units[23]);
+		round = 1;
+		ongoingTeam = PURPLE;
+	}
+	cout << "[System] Complete Initializing" << endl;
+}
 
 
 void Board::showBoard(){	//see StatusBoard.printStatus
@@ -161,70 +260,79 @@ void Board::showBeam(){		// see StatusBoard.printBeam
 	statusboard->printBeam();
 }
 
-void Board::selectUnit(int& r, int& c){
-	cout << "Player " << (ongoingTeam == PURPLE ? 1:2) << "'s turn!" << endl << "Which Unit do you want to control?" << endl;
+Point Board::selectUnit(){
+	Point result;
+
+	cout << "Player " << (ongoingTeam == PURPLE ? 1 : 2) << "'s turn!" << endl << "Which Unit do you want to control?" << endl;
 	do{
-		InputPosition(r, c);
-		if(chessboard[r][c]->getUnitTeam() != ongoingTeam){		// NOT ongoingTeam's Unit
+		result = InputPosition();
+		if (chessboard[result.getX()][result.getY()]->getUnitTeam() != ongoingTeam){		// NOT ongoingTeam's Unit
 			cout << "[System] Cannot control object" << endl;
 			continue;
 		}
-		else if(chessboard[r][c]->isUnitStun(round)){
+		else if (chessboard[result.getX()][result.getY()]->isUnitStun(round)){
 			cout << "[System] Unit is Stunned. choose another unit" << endl;
 			continue;
 		}
 		break;
-	}while(1);
+	} while (1);
+	return result;
 }
 
-
-int Board::selectAction(int r, int c){
-	Cell* target=chessboard[r][c];
-	int action;
-	switch(target->getUnitType()){
+int Board::selectAction(Point p){
+	Cell* target = chessboard[p.getX()][p.getY()];
+	char action;
+	switch (target->getUnitType()){
 	case KING:
-		action=1;		// King always MOVE
+		action = '1';		// King always MOVE
 		break;
 	case ATTACK:
 	case STUN:
-		action=2;		//Laser always ROTATE
+		action = '2';		//Laser always ROTATE
 		break;
 	default:
 		cout << "What's your Command of this Unit?" << endl;
 		cout << "1. Move		2. Rotate" << endl;
-		InputSelection(action);		// Input constrain to 1(MOVE) or 2(ROTATE)
+		action = InputSelection("12\0");		// Input constrain to 1(MOVE) or 2(ROTATE)
 	}
-	return action;		// returnType 1 == MOVE,  2 == ROTATE
+	return (action - '0');		// returnType 1 == MOVE,  2 == ROTATE
 }
 
-bool Board::commandUnit(int r, int c, int a){	// boardRow, boardCol, actionType
-	int row, col;
-    int action;
+Unit* Board::getUnitAt(Point p){
+	for (int i = 0; i < unit_len; i++){
+		if (units[i]->getPos() == p)	return units[i];
+	}
+	return NULL;
+}
 
-	switch(a){
+bool Board::commandUnit(Point p, int a){	// boardRow, boardCol, actionType
+	Unit* target = getUnitAt(p);
+	char action;
+	Point moveTo;
+	Unit* move;
+
+	switch (a){
 	case 1:		// Unit moving;
 		cout << "Which posistion do you want it to Move?" << endl;
-		InputPosition(row, col);
-		if(chessboard[row][col]->movableFrom(chessboard[r][c]->getUnitType(), r, c)){
-			chessboard[r][c]->moveTo(chessboard[row][col]);
-			cout << "[Log] Player " << ((chessboard[row][col]->getUnitTeam() == PURPLE) ? '1':'2') << " " << (char)('A'+r) << " " << c+1 << " => " << (char)('A'+row) << " " << col+1 << endl;
-            return true;
-		}
+
+		moveTo = InputPosition();
+		move = getUnitAt(moveTo);
+		if (target->moveUnit(moveTo, move))
+			return true;
 		else
 			return false;
-	    break;	
-
+		break;
 	case 2:		// Unit Rotating;
-		switch(chessboard[r][c]->getUnitType()){
+		switch (chessboard[p.getX()][p.getY()]->getUnitType()){
 		case ATTACK:
 		case STUN:
 		case HYPER:
 			cout << "do you want it to Rotate?" << endl;
 			cout << "1.OK		2. Cancel" << endl;
-			InputSelection(action);
-			if(action == 1){
-				chessboard[r][c]->setUnitDir(DNULL);
-				cout << "[Log] Player " << ((chessboard[r][c]->getUnitTeam() == PURPLE) ? '1':'2') << " " << (char)('A'+r) << " " << c+1 << " ROTATE" << endl;
+			action = InputSelection("10\0");
+			if (action == '1'){
+				chessboard[p.getX()][p.getY()]->setUnitDir(DNULL);
+				cout << "[Log] Player " << ((chessboard[p.getX()][p.getY()]->getUnitTeam() == PURPLE) ? '1' : '2') << " " << (char)('A' + p.getX()) << " " << p.getY() + 1 << " ROTATE" << endl;
 			}
 			else
 				return false;
@@ -234,88 +342,82 @@ bool Board::commandUnit(int r, int c, int a){	// boardRow, boardCol, actionType
 		case SPLIT:
 			cout << "Which direction do you want it to Rotate?" << endl;
 			cout << "1.LEFT		2.RIGHT" << endl;
-			InputSelection(action);
-			action == 1 ? chessboard[r][c]->setUnitDir(LEFT) : chessboard[r][c]->setUnitDir(RIGHT);
-			cout << "[Log] Player " << ((chessboard[r][c]->getUnitTeam() == PURPLE) ? '1':'2') << " " << (char)('A'+r) << " " << c+1 << " ROTATE" << endl;
-			break;		
-	    }
-	return true;
-    }
+			action = InputSelection("10\0");
+			action == 1 ? chessboard[p.getX()][p.getY()]->setUnitDir(LEFT) : chessboard[p.getX()][p.getY()]->setUnitDir(RIGHT);
+			cout << "[Log] Player " << ((chessboard[p.getX()][p.getY()]->getUnitTeam() == PURPLE) ? '1' : '2') << " " << (char)('A' + p.getX()) << " " << p.getY() + 1 << " ROTATE" << endl;
+			break;
+		}
+		return true;
+	}
+	return false;
 }
 
-int Board::launchLaser(UnitType u, Direction d, int r, int c){	// 0 - nothing, 1 : PURPLE win, 2 : BLUE win, 3 : DRAW
-    int win=0;
+int Board::launchLaser(UnitType u, Direction d, Point p){	// 0 - nothing, 1 : PURPLE win, 2 : BLUE win, 3 : DRAW
+	int win = 0;
+	int r = p.getX();
+	int c = p.getY();
 	do{
-		switch(d){
+		switch (d){
 		case UP:	r--;	break;
 		case DOWN:	r++;	break;
 		case RIGHT:	c++;	break;
 		case LEFT:	c--;	break;
 		}	// Direction setting
 
-		if(r>=9 || r<0 || c>=9 || c<0)	break;	//Out of board
-		Direction dtemp=d;
-		if(chessboard[r][c]->getUnitType() == UNULL)
+		if (r >= 9 || r < 0 || c >= 9 || c < 0)	break;	//Out of board
+		Direction dtemp = d;
+		if (chessboard[r][c]->getUnitType() == UNULL)
 			statusboard->setBeam(u, r, c);
 		else
-			win += chessboard[r][c]->beamCurCell(d, u, round);
-		if(d!=DNULL && chessboard[r][c]->getUnitType() == SPLIT)
-			win += launchLaser(u, dtemp, r, c);
-	}while(d!=DNULL);		// no way to move beam
+			win = win | (1 << chessboard[r][c]->beamCurCell(d, u, round));
+		if (d != DNULL && chessboard[r][c]->getUnitType() == SPLIT)
+			win = win | launchLaser(u, dtemp, Point(r, c));
+	} while (d != DNULL);		// no way to move beam
 	return win;		// whether game is over
 }
 
-UnitType Board::selectLaser(int& r, int& c){
-	int a;
+Point Board::selectLaser(){
+	char a;
 	cout << "Which Laser do you want to launch?" << endl;
 	cout << "1. Attack\t2.Stun" << endl;
-	InputSelection(a);
-    if(a == 1){
-        if(ongoingTeam == PURPLE){
-            r=0; c=0;
-        }
-        else{
-            r=8; c=8;
-        }
-       	return ATTACK;
-    }
-    else{
-        if(ongoingTeam == PURPLE){
-            r=0;    c=8;
-        }
-        else{
-            r=8;    c=0;
-        }
-        return STUN;
-    }
+	a = InputSelection("10\0");
+	if (a == '1'){
+		if (ongoingTeam == PURPLE)	return Point(0, 0);
+		else return Point(8, 8);
+	}
+	else{
+		if (ongoingTeam == PURPLE)	return Point(0, 8);
+		else return Point(8, 0);
+	}
 }
+
 void Board::startGame(){
-	int win=0;
-	int row, col;
-	cout << "[System] Initializing Game.." << endl;
+	int win = 0;
+	Point pos;
+
 	initGame();
-	cout << "[System] Complete Initializing." << endl;
-	while(win == 0){
+	while (win == 0 || win == 1 << 1){
 		showBoard();
-		selectUnit(row, col);
-		int actionType = selectAction(row, col);    //action select
-		bool validAction = commandUnit(row, col, actionType);	// action perform
-		if(validAction == false){
+		pos = selectUnit();
+		cout << pos.getX() << pos.getY() << endl;
+		int actionType = selectAction(pos);    //action select
+		bool validAction = commandUnit(pos, actionType);	// action perform
+		if (validAction == false){
 			cout << "[System] Unable command. Try again" << endl;
 			continue;
 		}
-        statusboard->setCell(chessboard);
-		UnitType u=selectLaser(row, col);
-        statusboard->resetBeam();
-		win=launchLaser(u, chessboard[row][col]->getUnitDir(), row, col);		//laser launch
+		statusboard->setCell(chessboard);
+		Point laser_pos = selectLaser();
+		statusboard->resetBeam();
+		win = launchLaser(chessboard[laser_pos.getX()][laser_pos.getY()]->getUnitType(), chessboard[laser_pos.getX()][laser_pos.getY()]->getUnitDir(), laser_pos);		//laser launch
 		showBeam();
-		if(win == 1)
-			cout << "Player 2 Win! " << endl;
-		else if(win == 2)
-			cout << "Player 1 win! " << endl;
-		else if(win == 3)
+		if ((win & (1 << 2)) && (win & (1 << 3)))
 			cout << "Draw ! " << endl;
-		ongoingTeam == PURPLE ? ongoingTeam=BLUE : ongoingTeam=PURPLE;	//change team
-        round++;
+		else if (win & (1 << 2))
+			cout << "Player 1 win! " << endl;
+		else if (win & (1 << 3))
+			cout << "Player 2 Win! " << endl;
+		ongoingTeam == PURPLE ? ongoingTeam = BLUE : ongoingTeam = PURPLE;	//change team
+		round++;
 	}
 }

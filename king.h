@@ -4,11 +4,11 @@
 
 class King : public Unit{
 public:
-	bool moveUnit(int, int);
-	bool rotateUnit(Direction);
+	King(Team, Point, int);
+	bool moveUnit(Point, Unit*);
 	int beamUnit(Direction&, UnitType, int);
-	Direction getDirection
-	King(Team, int, int);
+	bool rotateUnit(Direction);
+	Direction getDirection();		// get Direction
 };
 
 #endif

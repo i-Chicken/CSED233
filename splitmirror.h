@@ -6,8 +6,11 @@
 
 class SplitMirror : public Mirror{
 public:
-	SplitMirror(Direction, Team, int, int);
-	void setRotation(Direction d);
+	SplitMirror(Team, Point, int, Direction);
+	bool rotateUnit(Direction);
+	int beamUnit(Direction&, UnitType, int);
+	bool moveUnit(Point, Unit*);
 };
 
 #endif
+

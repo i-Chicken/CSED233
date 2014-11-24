@@ -1,7 +1,7 @@
 #include "attacklaser.h"
 
 
-AttackLaser::AttackLaser(Direction d, Team t, int r, int c): Laser(d, ATTACK, t, r, c){};
+AttackLaser::AttackLaser(Team t, Point p, Direction d): Laser(t, p, d){};
 
 bool AttackLaser::rotateUnit(Direction d){
 	if(team == PURPLE)

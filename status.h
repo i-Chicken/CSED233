@@ -3,7 +3,6 @@
 
 #include "cell.h"
 
-#define MAX_RANGE 9
 
 class StatusBoard{
 public:

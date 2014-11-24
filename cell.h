@@ -1,6 +1,5 @@
 #ifndef CELL_H
 #define CELL_H
-
 #include "king.h"
 #include "laser.h"
 #include "attacklaser.h"
@@ -13,23 +12,20 @@
 
 class Cell{
 public:
-	Cell(int, int);
+	Cell(Point);
 	~Cell();
 	void removeUnit();
-	void setCell(Unit*, bool);
+	void setCell(Unit*);
 	void setUnitDir(Direction);
-	bool movableFrom(UnitType, int, int);
-	void moveTo(Cell*);
-	void swapWith(Cell*);
+	bool moveTo(Point, Unit*);
 	Team getUnitTeam();
-	Direction getUnitDir();
 	UnitType getUnitType();
+	Direction getUnitDir();
 	bool isUnitStun(int);
     int beamCurCell(Direction&, UnitType, int);
 private:
-	int row, col;
+	Point point;
 	Unit* unit;
-	bool accessible;
 };
 
 #endif

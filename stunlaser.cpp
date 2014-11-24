@@ -1,11 +1,12 @@
 #include "stunlaser.h"
 
 
-StunLaser::StunLaser(Direction d, Team t, int r, int c): Laser(d, STUN, t, r, c){};
+StunLaser::StunLaser(Team t, Point p, Direction d): Laser(t, p, d){};
 
-void StunLaser::setRotation(){
+bool StunLaser::rotateUnit(Direction){
 	if(team == PURPLE)
 		direction == DOWN ? direction = LEFT : direction = DOWN;
 	else
 		direction == UP ?direction = RIGHT : direction = UP;
+	return true;
 }
