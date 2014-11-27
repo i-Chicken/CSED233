@@ -281,7 +281,7 @@ void Board::initGame(){
 		chessboard[5][6]->setCell(units[16]);
 		units[17] = new TriMirror(BLUE, Point(5, 8), -1, LEFT);
 		chessboard[5][8]->setCell(units[17]);
-		units[18] = new TriMirror(BLUE, Point(7, 1), -1, UP);
+		units[18] = new SplitMirror(BLUE, Point(7, 1), -1, UP);
 		chessboard[7][1]->setCell(units[18]);
 		units[19] = new StunLaser(BLUE, Point(8, 0), UP);
 		chessboard[8][0]->setCell(units[19]);
@@ -289,7 +289,7 @@ void Board::initGame(){
 		chessboard[8][2]->setCell(units[20]);
 		units[21] = new King(BLUE, Point(8, 3), -1);
 		chessboard[8][3]->setCell(units[21]);
-		units[22] = new TriMirror(BLUE, Point(8, 4), -1, UP);
+		units[22] = new BlockMirror(BLUE, Point(8, 4), -1, UP);
 		chessboard[8][4]->setCell(units[22]);
 		units[23] = new AttackLaser(BLUE, Point(8, 8), UP);
 		chessboard[8][8]->setCell(units[23]);
@@ -334,14 +334,15 @@ bool Board::teleUnit(Unit* u){
 	do{
 		r = rand() % 9;
 		c = rand() % 9;
-		if ((r == 0 && c == 1) || (r == 1 && c == 0))	continue;
-		if ((r == 0 && c == 7) || (r == 1 && c == 8))	continue;
-		if ((r == 7 && c == 0) || (r == 8 && c == 1))	continue;
-		if ((r == 7 && c == 8) || (r == 8 && c == 7))	continue;
+		Point temp(r,c);
+		if ( temp == Point(0,1) || temp == Point(1,0))	continue;
+		if ( temp == Point(7,0) || temp == Point(1,8))	continue;
+		if ( temp == Point(0,7) || temp == Point(1,8))	continue;
+		if ( temp == Point(7,8) || temp == Point(8,7))	continue;
 		if (u->getPos() == Point(r, c))	continue;
 		if (getUnitAt(Point(r, c)) != NULL)	continue;
-	} while (0);
-	cout << 
+		break;
+	} while (1);
 	u->setPos(Point(r, c));
 	return true;
 }

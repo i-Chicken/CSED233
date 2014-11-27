@@ -33,7 +33,8 @@ bool HyperMirror::moveUnit(Point p, Unit* u){
 	if ((p.getX() == 7 && p.getY() == 8) || (p.getX() == 8 && p.getY() == 7))	return false;
 	if ((p.getX() == 0 && p.getY() == 7) || (p.getX() == 1 && p.getY() == 8))	return false;
 	if ((p.getX() == 7 && p.getY() == 0) || (p.getX() == 8 && p.getY() == 1))	return false;	// laser adjacent false
-	u->moveUnit(point, NULL);
+	if(u != NULL)
+		u->moveUnit(point, NULL);
 	point = p;		// move unit to p
 	return true;
 
