@@ -26,7 +26,7 @@ private:
 	Unit* getUnitAt(Point);
 	bool commandUnit(Point, int);	// unit moves or rotate
 	int launchLaser(UnitType, Direction, Point);
-	string readFile(ifstream&);
+	char* readFile(ifstream&);
 	bool teleUnit(Unit*);
 	bool gameSave();
 	void setCell();
@@ -38,6 +38,6 @@ private:
 	StatusBoard* statusboard;
 	Unit** units;
 	int unit_len;
-	const char* savedata;
+	char* savedata;
 };
 #endif

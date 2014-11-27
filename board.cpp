@@ -1,6 +1,7 @@
 #include "board.h"
 #include <cstdlib>
 #include <ctime>
+#include <string.h>
 
 using namespace std;
 
@@ -66,7 +67,7 @@ Board::Board(StatusBoard* s){
 	savedata = NULL;
 }		//Constructor
 
-string Board::readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UNITi)(stuni)(DIRi)(ROWi)(COLi)
+char* Board::readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UNITi)(stuni)(DIRi)(ROWi)(COLi)
     int turn;
     char team;
     char unit;
@@ -75,11 +76,12 @@ string Board::readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UN
     char row;
     char col;
     string result="";
-
+	const char* temp;
 	file >> turn;
     if(file.eof() || file.fail() || turn < 1)  return NULL;
     result=result+(char)turn;
 
+	int c =0;
     file >> team;
 	while (file.eof() == false){
         if(!isInputValid(team, "BP\0") || file.eof())           return NULL;
@@ -92,11 +94,12 @@ string Board::readFile(ifstream& file){     // format type (turn)Sigma(TEAMi)(UN
         file >> row;
         if(!isInputValid(row, "ABCDEFGHI\0") || file.eof())     return NULL;
         file >> col;
-        if(!isInputValid(col, "012345678\0"))     return NULL;
+        if(!isInputValid(col, "123456789\0"))     return NULL;
         result = result + team + unit + (char)stun + dir + row + col;
 		file >> team;
     }
-    return result;   // string -> char*
+	temp=result.c_str();
+    return (char*)result.c_str();   // string -> char*
 }
 
 Board::Board(StatusBoard *s, ifstream& file){
@@ -113,16 +116,11 @@ Board::Board(StatusBoard *s, ifstream& file){
 		}
 	}
     cout << "[System] Loading Game..." << endl;
-	string save = readFile(file);
-	if (save == ""){
+	savedata = readFile(file);
+	if (savedata == NULL){
 		cout << "[System] Failure to Load Game!" << endl;
-		savedata = NULL;
 	}
     else{
-		savedata = save.c_str();
-        for(int i=0; savedata[i] != 0; i++)
-            cout << ((int)savedata[i]) << " ";
-		cout << endl;
     }
 		// load game from file
 }
@@ -154,14 +152,11 @@ void Board::initGame(){
 	cout << "[System] Initializing Game.." << endl;
 	if (savedata != NULL){
 		int len;
-		for (len = 0; len<20; len++){
-			cout << (int)savedata[len] << " " ;
-		}
-		cout << endl;
+		for (len = 0; savedata[len] != 0; len++);
+		
 		unit_len = (len - 1) / 6;
 		units = new Unit*[unit_len];
 
-		cout << unit_len << endl;
 		for (int i = 0; savedata[1 + 6 * i] != 0; i++){
 			char team = savedata[1 + 6 * i];
 			char type = savedata[1 + 6 * i + 1];
